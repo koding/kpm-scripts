@@ -1,0 +1,8 @@
+{
+  "installers": [
+    "ftp",
+    "mysql",
+    "phpmyadmin",
+    "wordpress"
+  ]
+}

@@ -1,0 +1,109 @@
+#!/usr/bin/env fish
+
+# ## Config
+set -l PROG_NAME    "ProFTPd"
+set -l REQ_STORAGE  4764
+set -l USERNAME     $USER
+
+# ## Check Requirements
+# ### User not root
+# Ensure that the user is not `root`, because the default Apache
+# web directory is /home/user/Web, where as root would
+# install it to /root/Web
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  echo "
+$PROG_NAME requires at least "(math $REQ_STORAGE / 1024)"MB storage, \
+and you have "(math $available_storage / 1024)"MB free.
+
+Please free up some space, and try again. You can start by deleting any large
+files or directories in your home directory or delete software that you do
+not need.
+
+You can also upgrade your account to get more space, at the following url
+
+    https://koding.com/Pricing
+"
+  # Add this message to the above echo, once the guide exists
+  #Please refer to the following guide to learn how to list and remove unused packages.
+  exit 1
+end
+# ### Check if already installed
+# We're bailing if it's already installed, *for now*.
+# This may change in the future.
+# REASON: Need to figure out if user pass (chpasswd) has to
+# be set again.
+if which proftpd > /dev/null
+  echo "
+ProFTPd is already installed. It can be started with the following command:
+
+    sudo service proftpd start
+"
+  exit 1
+end
+
+
+
+# ## Prompt for password
+echo "
+$PROG_NAME requires a user account password. This will be both your password
+for '$USERNAME', as well as your FTP Password. Please enter this below.
+"
+stty -echo < /dev/tty
+for x in (seq 3)
+  echo -n "Password: "
+  if not read password < /dev/tty
+    stty echo < /dev/tty
+    exit 1
+  end
+  if test -n $password
+    break
+  else if test $x -eq 3
+    echo -e "\nAborting after 3 empty inputs."
+    stty echo < /dev/tty
+    exit 1
+  else
+    echo -e "\nYou must enter a password. Please retry."
+  end
+end
+stty echo < /dev/tty
+
+
+
+# ## Set user password
+if not echo "$USERNAME:$password" | sudo chpasswd
+  echo "Error: Unable to set user password."
+  exit 1
+end
+
+
+
+# ## Install ftp
+echo "
+Password set, installing FTP
+"
+if not sudo apt-get update
+  echo "Error: Failure updating apt-get"
+  exit 1
+end
+if not sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y proftpd
+  echo "Error: Failure installing $PROG_NAME"
+  exit 1
+end
+
+
+
+# ## End
+echo "
+Installation complete
+"
+
+# vim: set filetype=fish:

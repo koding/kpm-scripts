@@ -1,0 +1,19 @@
+#!/usr/bin/env fish
+
+
+set -l TAG "v0.0.6"
+
+sudo curl -sSL -o /usr/local/bin/kpm \
+  "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
+
+sudo chmod +x /usr/local/bin/kpm
+
+echo "
+Koding Package Manager installation is complete. For help,
+run the following command:
+
+    kpm --help
+"
+
+
+# vim: set filetype=fish:
