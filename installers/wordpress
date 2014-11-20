@@ -73,7 +73,7 @@ end
 # We're restarting here, to not fail if mysql was
 # already running. Now, if it fails, mysql truly
 # failed to start.
-echo "Checking MySQL is status"
+echo "Checking MySQL status"
 if not sudo service mysql restart > /dev/null
   echo "Error: Failed to restart MySQL."
   exit 1
