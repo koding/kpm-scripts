@@ -102,8 +102,7 @@ end
 
 # ## Prompt for mysql root password
 echo "
-Please enter your MySQL root user password \
-(You will not see it outputted)"
+Please enter your MySQL root user password"
 set -l mysql_pass (get_password "Password: ")
 if not test "$status" -eq 0
   exit 1
@@ -122,7 +121,7 @@ end
 
 # ## Prompt for phpmyadmin app pass
 echo "
-Please create a phpMyAdmin app password (You will not see it outputted)"
+Please create a phpMyAdmin app password"
 set -l app_pass (get_password "Password: ")
 if not test "$status" -eq 0
   exit 1
