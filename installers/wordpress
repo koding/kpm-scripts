@@ -82,24 +82,24 @@ end
 
 
 # ## Get MySQL User Password
-stty -echo < /dev/tty
+#stty -echo < /dev/tty
 for x in (seq 3)
   echo -n "Enter your MySQL root user password: "
   if not read password < /dev/tty
-    stty echo < /dev/tty
+    #stty echo < /dev/tty
     exit 1
   end
   if test -n $password
     break
   else if test $x -eq 3
     echo -e "\nAborting after 3 empty inputs."
-    stty echo < /dev/tty
+    #stty echo < /dev/tty
     exit 1
   else
     echo -e "\nYou must enter a password. Please retry."
   end
 end
-stty echo < /dev/tty
+#stty echo < /dev/tty
 
 
 

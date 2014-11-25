@@ -38,24 +38,24 @@ end
 
 # ## Prompt for mysql root pass
 echo -e "\nPlease enter your desired mysql root password."
-stty -echo < /dev/tty
+#stty -echo < /dev/tty
 for x in (seq 3)
   echo -n "Password: "
   if not read password < /dev/tty
-    stty echo < /dev/tty
+    #stty echo < /dev/tty
     exit 1
   end
   if test -n $password
     break
   else if test $x -eq 3
     echo -e "\nAborting after 3 failed password attempts."
-    stty echo < /dev/tty
+    #stty echo < /dev/tty
     exit 1
   else
     echo -e "\nYou must enter a password. Please retry."
   end
 end
-stty echo < /dev/tty
+#stty echo < /dev/tty
 
 
 # ## Install mysql
