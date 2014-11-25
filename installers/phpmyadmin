@@ -4,24 +4,24 @@
 # ### Password
 function get_password
   set -l password
-  #stty -echo < /dev/tty
+  stty -echo < /dev/tty
   for x in (seq 3)
     echo -n $argv[1] > /dev/tty
     if not read password < /dev/tty
-      #stty echo < /dev/tty
+      stty echo < /dev/tty
       return 1
     end
     if test -n $password
       break
     else if test $x -eq 3
       echo -e "\nAborting after 3 empty inputs." > /dev/tty
-      #stty echo < /dev/tty
+      stty echo < /dev/tty
       return 1
     else
       echo -e "\nYou must enter a password. Please retry." > /dev/tty
     end
   end
-  #stty echo < /dev/tty
+  stty echo < /dev/tty
   echo $password
 end
 
