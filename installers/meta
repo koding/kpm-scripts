@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
 
-set -l TAG "v0.0.7"
+set -l TAG "v0.1.0"
 
 sudo curl -sSL -o /usr/local/bin/kpm \
   "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
