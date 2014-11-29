@@ -111,4 +111,4 @@ consistent user experience.
 
 
 
-[user guide]: http://learn.koding.com
+[user guide]: http://learn.koding.com/guides/getting-started-kpm
