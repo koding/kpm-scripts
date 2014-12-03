@@ -64,9 +64,9 @@ if which ungit > /dev/null
 $PROG_NAME is already installed. It can be started with the following \
 command:
 
-    ungit --port 8448
+    ungit
 
-And you can access your $PROG_NAME installation at the following address:
+You can access your $PROG_NAME installation at the following address:
 
     $USERNAME.koding.io:8448
 "
@@ -91,25 +91,27 @@ end
 
 
 # ## Start
-#ungit
-#or begin
-#  set -l err $status
-#  echo "Error: Starting installing ungit"
-#  echo "Error: Starting installing ungit" >&2
-#  exit $err
-#end
+ungit --port 8448 > /dev/null &
+or begin
+  set -l err $status
+  echo "Error: Starting installing ungit"
+  echo "Error: Starting installing ungit" >&2
+  exit $err
+end
 
 
 
 # ## End
 echo "
-Installation complete. You can start it with the following command:
-
-    ungit --port 8448
-
-And you can access your $PROG_NAME installation at the following address:
+Installation complete. $PROG_NAME has been started and you can access
+it at the following address:
 
     $USERNAME.koding.io:8448
+
+In the future, if you need to start Ungit, it can be started with
+the following command:
+
+    ungit
 "
 
 # vim: set filetype=fish:
