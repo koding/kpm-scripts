@@ -66,7 +66,7 @@ command:
 
     \$ ungit
 
-And you can access your $PROG_NAME installation at the following address:
+You can access your $PROG_NAME installation at the following address:
 
     $USERNAME.koding.io:8448
 "
@@ -91,7 +91,7 @@ end
 
 
 # ## Start
-#ungit > /dev/null &
+#ungit --port 8448 > /dev/null &
 #or begin
 #  set -l err $status
 #  echo "Error: Starting installing ungit"
@@ -103,11 +103,11 @@ end
 
 # ## End
 echo "
-Installation complete. You can start it with the following command:
+Installation complete. To start $PROG_NAME run the following command:
 
     \$ ungit
 
-And you can access your $PROG_NAME installation at the following address:
+You can access $PROG_NAME at the following address:
 
     $USERNAME.koding.io:8448
 "
