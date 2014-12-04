@@ -1,6 +1,7 @@
 {
   "installers": [
     "ftp",
+    "meteor",
     "mysql",
     "phpmyadmin",
     "ungit",
