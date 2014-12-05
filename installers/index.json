@@ -2,6 +2,7 @@
   "installers": [
     "ftp",
     "mysql",
+    "mongodb",
     "phpmyadmin",
     "wordpress"
   ]
