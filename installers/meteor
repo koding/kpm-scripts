@@ -8,6 +8,23 @@ set -l REQ_STORAGE  806128
 set -l USERNAME     $USER
 
 # ## Check Requirements
+# ### Check if it's already installed
+if which meteor > /dev/null
+  echo "
+$PROG_NAME is already installed. To create a $PROG_NAME app, use the meteor
+command as seen below:
+
+    \$ meteor create ~/my_cool_app
+    \$ cd ~/my_cool_app
+    \$ meteor
+
+Or see the docs at:
+
+    http://docs.meteor.com
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
 # ### User not root
 # Ensure that the user is not `root`, because the default Apache
 # web directory is /home/user/Web, where as root would
@@ -36,23 +53,6 @@ You can also upgrade your account to get more space, at the following url
     https://koding.com/Pricing
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
-end
-# ### Check if it's already installed
-if which meteor > /dev/null
-  echo "
-$PROG_NAME is already installed. To create a meteor app, use the meteor
-command as seen below:
-
-    \$ meteor create ~/my_cool_app
-    \$ cd ~/my_cool_app
-    \$ meteor
-
-Or see the docs at:
-
-    http://docs.meteor.com
-"
-  echo "Req Error: Already installed" >&2
   exit 1
 end
 
