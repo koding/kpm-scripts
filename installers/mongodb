@@ -3,7 +3,7 @@ function main
 
 # ## Config
 set -l PROG_NAME    "MongoDB"
-set -l REQ_STORAGE  108328
+set -l REQ_STORAGE  697036
 set -l USERNAME     $USER
 
 
@@ -41,7 +41,7 @@ end
 
 
 # ## Install
-sudo apt-get install mongodb
+sudo apt-get install -y mongodb
 or begin
   set -l err $status
   echo "Error: Failure installing $PROG_NAME"
@@ -64,7 +64,7 @@ end
 
 
 # ## Restart mongo
-sudo service mongodb restart
+sudo service mongodb start
 or begin
   set -l err $status
   echo "Error: Failure restarting $PROG_NAME"
