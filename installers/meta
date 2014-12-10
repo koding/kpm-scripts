@@ -3,10 +3,24 @@
 
 set -l TAG "v0.1.2"
 
+# ## Download
 sudo curl -sSL -o /usr/local/bin/kpm \
   "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
+or begin
+  set -l err $status
+  echo "Error $err: Error downloading kpm"
+  exit $err
+end
 
+
+# ## Set perms
 sudo chmod +x /usr/local/bin/kpm
+or begin
+  set -l err $status
+  echo "Error $err: Error setting kpm permissions"
+  exit $err
+end
+
 
 echo "
 Koding Package Manager installation is complete. For help,
