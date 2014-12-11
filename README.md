@@ -1,5 +1,5 @@
 
-# kpm
+# kpm Scripts
 
 The Koding Package Manager is a binary *(the `kpm` bin)*, and a 
 series of installation and removal scripts. The scripts install programs 
