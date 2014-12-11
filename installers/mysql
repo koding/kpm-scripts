@@ -13,6 +13,7 @@ command:
 
    sudo service mysql start
 "
+  echo "Req Error: Already installed" >&2
   exit 1
 end
 # ### Storage
@@ -32,6 +33,7 @@ You can also upgrade your account to get more space, at the following url
 "
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
+  echo "Req Error: Not enough storage" >&2
   exit 1
 end
 
@@ -43,6 +45,7 @@ for x in (seq 3)
   echo -n "Password: "
   if not read password < /dev/tty
     stty echo < /dev/tty
+    echo "Aborting after empty password" >&2
     exit 1
   end
   if test -n $password
@@ -50,6 +53,7 @@ for x in (seq 3)
   else if test $x -eq 3
     echo -e "\nAborting after 3 failed password attempts."
     stty echo < /dev/tty
+    echo "Aborting after 3 password attempts" >&2
     exit 1
   else
     echo -e "\nYou must enter a password. Please retry."
@@ -62,13 +66,19 @@ stty echo < /dev/tty
 echo "
 Installing MySQL..
 "
-if not sudo apt-get update
+sudo apt-get update
+or begin
+  set -l err $status
   echo "Error: Failure updating apt-get"
-  exit 1
+  echo "Error: Failure updating apt-get" >&2
+  exit $err
 end
-if not sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y mysql-server
+sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y mysql-server
+or begin
+  set -l err $status
   echo "Error: Failure installing $PROG_NAME"
-  exit 1
+  echo "Error: Failure during apt-get install" >&2
+  exit $err
 end
 
 
@@ -76,16 +86,22 @@ end
 # We're restarting here, to not fail if mysql was
 # already running (Which it likely is, due to apt-get).
 # Now, if it fails, mysql truly failed to start.
-if not sudo service mysql restart
+sudo service mysql restart
+or begin
+  set -l err $status
   echo "Error: MySQL failed to start."
-  exit 1
+  echo "Error: MySQL failed to start." >&2
+  exit $err
 end
 
 
 # ## Set root user password
-if not mysqladmin -u root password $password
+mysqladmin -u root password $password
+or begin
+  set -l err $status
   echo "Error: Mysqladmin failed to set root password."
-  exit 1
+  echo "Error: Mysqladmin failed to set root password." >&2
+  exit $err
 end
 
 echo "
