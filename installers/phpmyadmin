@@ -36,6 +36,35 @@ set -l USERNAME     $USER
 
 
 # ## Check Requirements
+# ### Existing Install
+if test -e /etc/phpmyadmin
+  echo "
+A previous $PROG_NAME installation is detected. To access it,
+visit the following link:
+
+    $USERNAME.koding.io/phpmyadmin
+"
+  echo "Req Error: Already installed"
+  exit 1
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  echo "Req Error: Apache not installed" >&2
+  exit 1
+end
+# ### MySQL
+if not which mysql > /dev/null
+  echo "
+$PROG_NAME requires that MySQL is already installed. Please install
+MySQL first.
+"
+  echo "Req Error: Mysql not installed" >&2
+  exit 1
+end
 # ### Storage
 set -l available_storage
 if not set available_storage (df / | awk 'NR>1{print $4}')
@@ -57,32 +86,7 @@ You can also upgrade your account to get more space, at the following url
 "
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
-  exit 1
-end
-# ### Apache
-if not test -e /usr/sbin/apache2
-  echo "
-$PROG_NAME requires that Apache is already installed. Please install
-Apache first.
-"
-  exit 1
-end
-# ### MySQL
-if not which mysql > /dev/null
-  echo "
-$PROG_NAME requires that MySQL is already installed. Please install
-MySQL first.
-"
-  exit 1
-end
-# ### Existing Install
-if test -e /etc/phpmyadmin
-  echo "
-A previous $PROG_NAME installation is detected. To access it,
-visit the following link:
-
-    $USERNAME.koding.io/phpmyadmin
-"
+  echo "Req Error: Not enough storage" >&2
   exit 1
 end
 
@@ -93,9 +97,12 @@ end
 # already running. Now, if it fails, mysql truly
 # failed to start.
 echo "Checking MySQL status"
-if not sudo service mysql restart > /dev/null
+sudo service mysql restart > /dev/null
+or begin
+  set -l err $status
   echo "Error: Failed to restart MySQL."
-  exit 1
+  echo "Error: Failed to restart MySQL." >&2
+  exit $err
 end
 
 
@@ -105,6 +112,7 @@ echo "
 Please enter your MySQL root user password"
 set -l mysql_pass (get_password "Password: ")
 if not test "$status" -eq 0
+  echo "Error: Failed to get mysql password from user" >&2
   exit 1
 end
 echo ""
@@ -112,9 +120,12 @@ echo ""
 
 
 # ## Test mysql password
-if not mysql -uroot -p$mysql_pass -e ""
+mysql -uroot -p$mysql_pass -e ""
+or begin
+  set -l err $status
   echo "Error: Invalid mysql root user authorization"
-  exit 1
+  echo "Error: Invalid mysql root user authorization" >&2
+  exit $err
 end
 
 
@@ -124,6 +135,7 @@ echo "
 Please create a phpMyAdmin app password"
 set -l app_pass (get_password "Password: ")
 if not test "$status" -eq 0
+  echo "Error: Failed to get phpMyAdmin App password from user" >&2
   exit 1
 end
 echo ""
@@ -136,45 +148,90 @@ echo "
 Configuring and installing phpmyadmin
 "
 echo "phpmyadmin phpmyadmin/dbconfig-install boolean true"             | sudo debconf-set-selections
+or begin
+  set -l err $status
+  echo "Error: Failed to configure phpMyAdmin Installer."
+  echo "Error: Preseeding debconf failed at dbconfig-installer." >&2
+  exit $err
+end
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | sudo debconf-set-selections
+or begin
+  set -l err $status
+  echo "Error: Failed to configure phpMyAdmin Installer."
+  echo "Error: Preseeding debconf failed at reconfigure-webserver" >&2
+  exit $err
+end
 echo "phpmyadmin phpmyadmin/mysql/admin-pass password $mysql_pass"     | sudo debconf-set-selections
+or begin
+  set -l err $status
+  echo "Error: Failed to configure phpMyAdmin Installer."
+  echo "Error: Preseeding debconf failed at admin-pass" >&2
+  exit $err
+end
 echo "phpmyadmin phpmyadmin/mysql/app-pass password $app_pass"         | sudo debconf-set-selections
+or begin
+  set -l err $status
+  echo "Error: Failed to configure phpMyAdmin Installer."
+  echo "Error: Preseeding debconf failed at app-pass" >&2
+  exit $err
+end
 echo "phpmyadmin phpmyadmin/app-password-confirm password $app_pass"   | sudo debconf-set-selections
+or begin
+  set -l err $status
+  echo "Error: Failed to configure phpMyAdmin Installer."
+  echo "Error: Preseeding debconf failed at app-pass-confirm" >&2
+  exit $err
+end
 
 
 
 # ## Install phpmyadmin
-if not sudo apt-get update
+sudo apt-get update
+or begin
+  set -l err $status
   echo "Error: Failed apt-get update"
-  exit 1
+  echo "Error: Failed apt-get update" >&2
+  exit $err
 end
-if not sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y phpmyadmin
+sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y phpmyadmin
+or begin
+  set -l err $status
   echo "Error: Failed to install phpmyadmin"
-  exit 1
+  echo "Error: Failed to install phpmyadmin" >&2
+  exit $err
 end
 
 
 
 # ## Enable mcrypt
-if not sudo php5enmod mcrypt
+sudo php5enmod mcrypt
+or begin
+  set -l err $status
   echo "Error: Failed to enable mcrypt mod"
-  exit 1
+  echo "Error: Failed to enable mcrypt mod" >&2
+  exit $err
 end
 
 
 
 # ## Include the config to the end of the apache file
-if not echo "Include /etc/phpmyadmin/apache.conf" | sudo tee -a /etc/apache2/apache2.conf
+echo "Include /etc/phpmyadmin/apache.conf" | sudo tee -a /etc/apache2/apache2.conf
+or begin
+  set -l err $status
   echo "Error: Failed to append phpmyadmin config to apache config"
-  exit 1
+  echo "Error: Failed to append phpmyadmin config to apache config" >&2
+  exit $err
 end
 
 
 
 # ## Restart apache
-if not sudo service apache2 restart
+sudo service apache2 restart
+or begin
+  set -l err $status
   echo "Error: Failed to restart apache"
-  exit 1
+  echo "Error: Failed to restart apache" >&2
+  exit $err
 end
 
 
