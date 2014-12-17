@@ -27,7 +27,7 @@ You can also upgrade your account to get more space, at the following url
   exit 1
 end
 # ### Check if already installed
-if which ungit > /dev/null
+if which mongod > /dev/null
   echo "
 $PROG_NAME is already installed. It can be started with the following \
 command:
