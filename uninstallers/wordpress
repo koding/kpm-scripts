@@ -1,0 +1,137 @@
+#!/usr/bin/env fish
+function main
+
+
+
+# ## Config
+set -l PROG_NAME    "Wordpress"
+set -l USERNAME     $USER
+set -l DBNAME       "wordpress_db"
+set -l INSTALL_LOC  ~/Web/wordpress
+
+
+
+# ## Check Requirements
+# ### Is it installed?
+if not test -e "$INSTALL_LOC"
+  echo "Error: A $PROG_NAME installation in the default kpm install
+location cannot be found."
+  echo "Req Error: Cannot find install" >&2
+  exit 1
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes configuration, databases, and any data that
+they contain. This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Remove database
+# If mysql is installed, remove database. If it's not, ignore db
+if which mysql > /dev/null
+  # ### Get MySQL User Password
+  stty -echo < /dev/tty
+  for x in (seq 3)
+    echo -n "
+Enter your MySQL root user password: "
+    if not read password < /dev/tty
+      stty echo < /dev/tty
+      exit 1
+    end
+    if test -n $password
+      break
+    else if test $x -eq 3
+      echo -e "\nAborting after 3 empty inputs."
+      stty echo < /dev/tty
+      exit 1
+    else
+      echo -e "\nYou must enter a password. Please retry."
+    end
+  end
+  stty echo < /dev/tty
+
+  # We're not testing the login here, since we're not requiring
+  # that this section passes. This design may change in the future.
+  mysql -uroot -p"$password" -e "DROP DATABASE $DBNAME;"
+  or begin
+    set -l err $status
+    echo "Warning: Removing database failed"
+    echo "Warning: Drop database failed with exit $err" >&2
+  end
+end
+
+
+
+# ## Remove
+rm -rf $INSTALL_LOC
+# I don't think it's even possible for `rm -rf` to return a non-zero, but
+# checking regardless
+or begin
+  set -l err $status
+  echo "Error: Unknown error when removing $PROG_NAME"
+  echo "Unknown Error: rm -rf failed to remove $INSTALL_LOC" >&2
+  exit $err
+end
+
+
+
+
+# ## Uninstall apt dependencies
+sudo apt-get purge -y php5-mysql
+or begin
+  set -l err $status
+  echo "Error: Failed to remove dependencies of $PROG_NAME"
+  echo "Error: apt-get purge php5-mysql failed" >&2
+  exit $err
+end
+
+
+
+# ## Autoremove
+sudo apt-get autoremove -y
+or begin
+  set -l err $status
+  echo "Error: Failed to cleanup after $PROG_NAME"
+  echo "Error: apt-get autoremove failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+
+
+end
+main
+# vim: set filetype=fish:
