@@ -32,7 +32,9 @@ end
 # ## Confirm
 echo "
 By uninstalling $PROG_NAME, you will DELETE any embedded $PROG_NAME
-databases. This cannot be undone.
+databases.
+
+This cannot be undone.
 
 Are you sure?
 "
