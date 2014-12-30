@@ -25,8 +25,10 @@ end
 # ## Confirm
 echo "
 By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
-$PROG_NAME. This includes configuration, databases, and any data that
-they contain. This cannot be undone.
+$PROG_NAME. This includes configuration, database, and any data that
+it contains.
+
+This cannot be undone.
 
 Are you sure?
 "

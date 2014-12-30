@@ -21,8 +21,9 @@ end
 # ## Confirm
 echo "
 By uninstalling $PROG_NAME, you will FULLY DELETE all $PROG_NAME
-configuration, databases, and any data that they contain. This
-cannot be undone.
+configuration, databases, and any data that they contain.
+
+This cannot be undone.
 
 Are you sure?
 "

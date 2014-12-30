@@ -1,4 +1,5 @@
 {
   "version": "v0.1.5",
-  "checksum": "e48af85119772756b335fba87d7d6c35"
+  "checksum": "e48af85119772756b335fba87d7d6c35",
+  "required": false
 }
