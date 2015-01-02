@@ -1,5 +1,6 @@
 {
   "installers": [
+    "codeigniter",
     "ftp",
     "meteor",
     "mysql",
