@@ -1,11 +1,13 @@
 {
   "installers": [
     "codeigniter",
+    "django",
     "ftp",
     "meteor",
     "mysql",
     "mongodb",
     "phpmyadmin",
+    "pip",
     "rails",
     "ungit",
     "wordpress"
