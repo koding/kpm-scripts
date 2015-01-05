@@ -2,6 +2,7 @@
   "installers": [
     "codeigniter",
     "django",
+    "dropbox",
     "ftp",
     "meteor",
     "mysql",
