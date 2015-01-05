@@ -9,6 +9,36 @@ set -l DBUSER       "root"
 set -l INSTALL_LOC  ~/Web/wordpress
 
 # ## Check Requirements
+# ### Existing Install
+if test -e $INSTALL_LOC
+  echo "
+The install location $INSTALL_LOC already exists. Please move that directory
+before installing $PROG_NAME in that location. If wordpress is properly
+installed there, you can access it at the following address:
+
+    $USERNAME.koding.io/wordpress
+"
+  echo "Req Error: Install location occupied" >&2
+  exit 1
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  echo "Req Error: Apache not installed" >&2
+  exit 1
+end
+# ### MySQL
+if not which mysql > /dev/null
+  echo "
+$PROG_NAME requires that MySQL is already installed. Please install
+MySQL first.
+"
+  echo "Req Error: Mysql not installed" >&2
+  exit 1
+end
 # ### User not root
 # Ensure that the user is not `root`, because the default Apache
 # web directory is /home/user/Web, where as root would
@@ -18,6 +48,7 @@ if test "$USERNAME" = "root"
 $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
+  echo "Req Error: Not logged in as user" >&2
   exit 1
 end
 # ### Storage
@@ -37,33 +68,7 @@ You can also upgrade your account to get more space, at the following url
 "
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
-  exit 1
-end
-# ### Apache
-if not test -e /usr/sbin/apache2
-  echo "
-$PROG_NAME requires that Apache is already installed. Please install
-Apache first.
-"
-  exit 1
-end
-# ### MySQL
-if not which mysql > /dev/null
-  echo "
-$PROG_NAME requires that MySQL is already installed. Please install
-MySQL first.
-"
-  exit 1
-end
-# ### Existing Install
-if test -e $INSTALL_LOC
-  echo "
-The install location $INSTALL_LOC already exists. Please move that directory
-before installing $PROG_NAME in that location. If wordpress is properly
-installed there, you can access it at the following address:
-
-    $USERNAME.koding.io/wordpress
-"
+  echo "Req Error: Not enough storage" >&2
   exit 1
 end
 
@@ -74,9 +79,12 @@ end
 # already running. Now, if it fails, mysql truly
 # failed to start.
 echo "Checking MySQL status"
-if not sudo service mysql restart > /dev/null
+sudo service mysql restart > /dev/null
+or begin
+  set -l err $status
   echo "Error: Failed to restart MySQL."
-  exit 1
+  echo "Error: Failed to restart MySQL." >&2
+  exit $err
 end
 
 
@@ -87,6 +95,7 @@ for x in (seq 3)
   echo -n "Enter your MySQL root user password: "
   if not read password < /dev/tty
     stty echo < /dev/tty
+    echo "Aborting after empty password" >&2
     exit 1
   end
   if test -n $password
@@ -94,6 +103,7 @@ for x in (seq 3)
   else if test $x -eq 3
     echo -e "\nAborting after 3 empty inputs."
     stty echo < /dev/tty
+    echo "Aborting after 3 password attempts" >&2
     exit 1
   else
     echo -e "\nYou must enter a password. Please retry."
@@ -104,17 +114,23 @@ stty echo < /dev/tty
 
 
 # ## Test mysql password
-if not mysql -uroot -p$password -e ""
+mysql -uroot -p$password -e ""
+or begin
+  set -l err $status
   echo "Error: Invalid mysql root user authorization"
-  exit 1
+  echo "Error: Invalid mysql root user authorization" >&2
+  exit $err
 end
 
 
 
 # ## Setup the database
-if not mysql -uroot -p$password -e "CREATE DATABASE wordpress_db;"
+mysql -uroot -p$password -e "CREATE DATABASE wordpress_db;"
+or begin
+  set -l err $status
   echo "Error: Failed to setup database."
-  exit 1
+  echo "Error: Failed to setup database." >&2
+  exit $err
 end
 
 
@@ -122,17 +138,26 @@ end
 # ## Install a required package
 echo "
 Installing php5-mysql"
-if not sudo apt-get update
+sudo apt-get update
+or begin
+  set -l err $status
   echo "Error: Failure updating apt-get"
-  exit 1
+  echo "Error: Failure updating apt-get" >&2
+  exit $err
 end
-if not sudo apt-get install -y php5-mysql
+sudo apt-get install -y php5-mysql
+or begin
+  set -l err $status
   echo "Error: Failure to install php5-mysql"
-  exit 1
+  echo "Error: Failure to install php5-mysql" >&2
+  exit $err
 end
-if not sudo service apache2 restart
+sudo service apache2 restart
+or begin
+  set -l err $status
   echo "Error: Failure restarting apache."
-  exit 1
+  echo "Error: Failure restarting apache." >&2
+  exit $err
 end
 
 
@@ -141,22 +166,31 @@ end
 echo "Installing $PROG_NAME"
 mkdir -p $INSTALL_LOC
 cd $INSTALL_LOC
-if not curl -sfL -O https://wordpress.org/latest.tar.gz
+curl -sfL -O https://wordpress.org/latest.tar.gz
+or begin
+  set -l err $status
   echo "Error: Failed to download $PROG_NAME"
-  exit 1
+  echo "Error: Failed to download $PROG_NAME" >&2
+  exit $err
 end
-if not tar --strip-components=1 -zxf latest.tar.gz
+tar --strip-components=1 -zxf latest.tar.gz
+or begin
+  set -l err $status
   echo "Error: Failure to extract $PROG_NAME from archive"
-  exit 1
+  echo "Error: Failure to extract $PROG_NAME from archive" >&2
+  exit $err
 end
 rm latest.tar.gz
 
 
 
 # ## Setup the config
-if not cp wp-config-sample.php wp-config.php
+cp wp-config-sample.php wp-config.php
+or begin
+  set -l err $status
   echo "Error: Unable to find wp-config-sample.php"
-  exit 1
+  echo "Error: Unable to find wp-config-sample.php" >&2
+  exit $err
 end
 # We should be failing after each sed, but so far i haven't found
 # a (sane) method fail on sed not matching a pattern.
@@ -167,18 +201,27 @@ sed -i -e "s/password_here/$password/g" wp-config.php
 
 
 # ## Set permissions
-if not sudo chown -R $USERNAME: ./
+sudo chown -R $USERNAME: ./
+or begin
+  set -l err $status
   echo "Error: Failre to chown $INSTALL_LOC"
-  exit 1
+  echo "Error: Failre to chown $INSTALL_LOC" >&2
+  exit $err
 end
 mkdir -p wp-content/uploads
-if not sudo chown -R www-data: wp-content/uploads
+sudo chown -R www-data: wp-content/uploads
+or begin
+  set -l err $status
   echo "Error: Failure to chown $INSTALL_LOC/wp-content/uploads"
-  exit 1
+  echo "Error: Failure to chown $INSTALL_LOC/wp-content/uploads" >&2
+  exit $err
 end
-if not sudo chmod -R 755 wp-content/uploads
+sudo chmod -R 755 wp-content/uploads
+or begin
+  set -l err $status
   echo "Error: Failure to chmod $INSTALL_LOC/wp-content/uploads"
-  exit 1
+  echo "Error: Failure to chmod $INSTALL_LOC/wp-content/uploads" >&2
+  exit $err
 end
 
 
