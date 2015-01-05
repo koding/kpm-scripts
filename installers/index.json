@@ -1,10 +1,12 @@
 {
   "installers": [
+    "django",
     "ftp",
     "meteor",
     "mysql",
     "mongodb",
     "phpmyadmin",
+    "pip",
     "ungit",
     "wordpress"
   ]
