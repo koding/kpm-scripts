@@ -1,5 +1,6 @@
 {
   "installers": [
+    "dropbox",
     "ftp",
     "meteor",
     "mysql",
