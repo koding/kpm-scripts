@@ -64,7 +64,7 @@ end
 
 
 # ## Restart mongo
-sudo service mongodb start
+sudo service mongodb restart
 or begin
   set -l err $status
   echo "Error: Failure restarting $PROG_NAME"
