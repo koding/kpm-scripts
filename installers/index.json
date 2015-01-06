@@ -1,5 +1,6 @@
 {
   "installers": [
+    "codeigniter",
     "dropbox",
     "ftp",
     "meteor",
