@@ -23,7 +23,7 @@ if test -e ~/.dropbox-dist
 $PROG_NAME is already installed. To run start Dropbox, run the following
 command:
 
-    \$ ./dropbox-dist/dropboxd
+    \$ ./.dropbox-dist/dropboxd
 
 And following the onscreen instructions. For a detailed tutorial, please
 see the following learn Guide:
@@ -52,7 +52,7 @@ echo "
 $PROG_NAME installation complete. To run start Dropbox, run the following
 command:
 
-    \$ ./dropbox-dist/dropboxd
+    \$ ./.dropbox-dist/dropboxd
 
 And following the onscreen instructions. For a detailed tutorial, please
 see the following learn Guide:
