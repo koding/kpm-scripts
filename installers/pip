@@ -1,0 +1,46 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "pip"
+set -l REQ_STORAGE  4056
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if which pip > /dev/null
+  echo "
+$PROG_NAME is already installed. You can access it by running the
+following command:
+
+    \$ pip
+
+"
+end
+
+
+
+# ## Install
+sudo apt-get install -y python-pip
+or begin
+  set -l err $status
+  echo "Error: Failure installing pip"
+  echo "Error: apt-get install failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. To access it, run the following
+command:
+
+    \$ pip
+
+"
+end
+main
+# vim: set filetype=fish:
+
