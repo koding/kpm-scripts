@@ -1,0 +1,62 @@
+#!/usr/bin/env fish
+function main
+
+# ## Config
+set -l PROG_NAME    "Mean.io Stack"
+set -l REQ_STORAGE  697036
+set -l USERNAME     $USER
+
+# ## Set installs in this bundle
+set -l bundled mongodb grunt mean
+set -l mongodb "mongod" 
+set -l grunt "grunt"
+set -l mean "mean"
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes all programs included within the bundle:
+$bundled
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+# ## Unnstall everything in the bundle
+for bundle in $bundled
+	if which $$bundle > /dev/null
+   	 	echo "Installing $bundle"
+		kpm uninstall $bundle
+	end
+end
+
+# ## Complete
+echo "---------------------------------------------------------------------------------"
+echo "Uninstall complete, all uninstalls in $PROG_NAME completed successfully.  "
+echo "---------------------------------------------------------------------------------"
+
+end
+main
+# vim: set filetype=fish:

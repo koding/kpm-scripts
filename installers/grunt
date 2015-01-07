@@ -2,8 +2,8 @@
 function main
 
 # ## Config
-set -l PROG_NAME    "MongoDB"
-set -l REQ_STORAGE  697036
+set -l PROG_NAME    "Grunt"
+set -l REQ_STORAGE  2212
 set -l USERNAME     $USER
 
 
@@ -28,21 +28,39 @@ You can also upgrade your account to get more space, at the following url
 end
 
 # ### Check if already installed
-if which mongod > /dev/null
+if which grunt > /dev/null
   echo "
 $PROG_NAME is already installed. It can be started with the following \
 command:
 
-    \$ sudo service mongodb start
+    \$ grunt
 "
   echo "Req Error: Already installed" >&2
   exit 1
 end
 
+# ## Check if NodeJS installed
+if not which node > /dev/null
+  echo "
+$PROG_NAME requires that NodeJS is already installed. Please install
+NodeJS first.
+"
+  echo "Req Error: Missing node" >&2
+  exit 1
+end
 
+# ## Check if npm installed
+if not which npm > /dev/null
+  echo "
+$PROG_NAME requires that npm is already installed. Please install
+npm first.
+"
+  echo "Req Error: Missing npm" >&2
+  exit 1
+end
 
 # ## Install
-sudo apt-get install -y mongodb
+sudo npm install -g grunt-cli
 or begin
   set -l err $status
   echo "Error: Failure installing $PROG_NAME"
@@ -50,36 +68,14 @@ or begin
   exit $err
 end
 
-
-
-# ## Add config
-# TODO: Add a check here to see if the config already has the small=true
-# line.
-echo "smallfiles=true" | sudo tee -a /etc/mongodb.conf
-or begin
-  set -l err $status
-  echo "Error: Failure configuring $PROG_NAME"
-  echo "Error: Could not append to mongodb.conf" >&2
-  exit $err
-end
-
-
-# ## Restart mongo
-sudo service mongodb restart
-or begin
-  set -l err $status
-  echo "Error: Failure restarting $PROG_NAME"
-  echo "Error: Failure restarting $PROG_NAME" >&2
-  exit $err
-end
-
-
-
 # ## Complete
 echo "
-Installation complete, and $PROG_NAME is now running.
+Installation complete, and $PROG_NAME is now available.
+To use:
+\$ grunt
+In a directory containing a properly formatted Gruntfile and package.json.
+See http://gruntjs.com/getting-started for more information.
 "
-
 
 end
 main
