@@ -1,0 +1,80 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Django"
+set -l REQ_STORAGE  4056
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if which django-admin > /dev/null
+  echo "
+$PROG_NAME is already installed. To bootstrap a $PROG_NAME app, run
+the following commands:
+
+    \$ django-admin startproject myApp
+    \$ cd myApp
+    \$ python manage.py runserver 0.0.0.0:8000
+
+You can then access your Django server on the following address:
+
+    $USERNAME.koding.io:8000
+
+For more detailed instructions, follow the Official Tutorial at:
+
+    https://docs.djangoproject.com/en/1.7/intro/tutorial01/
+
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### Pip installed?
+if not which pip > /dev/null
+  echo "
+To install $PROG_NAME please install pip first. This can be done
+with the following command:
+
+    \$ kpm install pip
+
+"
+  echo "Req Error: pip not found" >&2
+  exit 1
+end
+
+
+
+
+# ## Install
+sudo pip install django
+or begin
+  set -l err $status
+  echo "Error: Failure installing django"
+  echo "Error: pip install django ailed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. To bootstrap a $PROG_NAME app, run
+the following commands:
+
+    \$ django-admin startproject myApp
+    \$ cd myApp
+    \$ python manage.py runserver 0.0.0.0:8000
+
+You can then access your Django server on the following address:
+
+    $USERNAME.koding.io:8000
+
+For more detailed instructions, follow the Official Tutorial at:
+
+    https://docs.djangoproject.com/en/1.7/intro/tutorial01/
+
+"
+end
+main
+# vim: set filetype=fish:
