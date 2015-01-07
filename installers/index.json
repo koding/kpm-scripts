@@ -4,11 +4,15 @@
     "django",
     "dropbox",
     "ftp",
+	"grunt",
+	"mean",
+	"mean-io-stack",
     "meteor",
     "mysql",
     "mongodb",
     "phpmyadmin",
     "pip",
+    "rails",
     "ungit",
     "wordpress"
   ]

@@ -1,0 +1,82 @@
+#!/usr/bin/env fish
+function main
+
+# ## Config
+set -l PROG_NAME    "Grunt"
+set -l REQ_STORAGE  2212
+set -l USERNAME     $USER
+
+
+# ## Check Requirements
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  echo "
+$PROG_NAME requires at least "(math $REQ_STORAGE / 1024)"MB storage, \
+and you have "(math $available_storage / 1024)"MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url
+
+    https://koding.com/Pricing
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+# ### Check if already installed
+if which grunt > /dev/null
+  echo "
+$PROG_NAME is already installed. It can be started with the following \
+command:
+
+    \$ grunt
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+
+# ## Check if NodeJS installed
+if not which node > /dev/null
+  echo "
+$PROG_NAME requires that NodeJS is already installed. Please install
+NodeJS first.
+"
+  echo "Req Error: Missing node" >&2
+  exit 1
+end
+
+# ## Check if npm installed
+if not which npm > /dev/null
+  echo "
+$PROG_NAME requires that npm is already installed. Please install
+npm first.
+"
+  echo "Req Error: Missing npm" >&2
+  exit 1
+end
+
+# ## Install
+sudo npm install -g grunt-cli
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME"
+  echo "Error: apt-get failed to install $PROG_NAME" >&2
+  exit $err
+end
+
+# ## Complete
+echo "
+Installation complete, and $PROG_NAME is now available.
+To use:
+\$ grunt
+In a directory containing a properly formatted Gruntfile and package.json.
+See http://gruntjs.com/getting-started for more information.
+"
+
+end
+main
+# vim: set filetype=fish:
