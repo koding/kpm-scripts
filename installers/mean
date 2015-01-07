@@ -82,6 +82,10 @@ end
 
 
 # ## Install
+# ### build-essential - These will be needed for the user to npm install a mean project without getting bson errors
+sudo apt-get install gcc make build-essential
+
+# ### mean
 sudo npm install -g mean-cli
 or begin
   set -l err $status
