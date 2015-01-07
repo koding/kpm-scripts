@@ -21,14 +21,10 @@ end
 if test -e ~/.dropbox-dist
   echo "
 $PROG_NAME is already installed. To run start Dropbox, run the following
-command:
+command and follow the onscreen instructions.
 
     \$ ./.dropbox-dist/dropboxd
 
-And following the onscreen instructions. For a detailed tutorial, please
-see the following learn Guide:
-
-    TODO: Link
 "
   echo "Req Error: Already installed" >&2
   exit 1
@@ -50,14 +46,10 @@ end
 # ## Success
 echo "
 $PROG_NAME installation complete. To run start Dropbox, run the following
-command:
+command and follow the onscreen instructions.
 
     \$ ./.dropbox-dist/dropboxd
 
-And following the onscreen instructions. For a detailed tutorial, please
-see the following learn Guide:
-
-    TODO: Link
 "
 end
 main
