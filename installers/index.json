@@ -9,6 +9,7 @@
     "mongodb",
     "phpmyadmin",
     "pip",
+    "redis",
     "ungit",
     "wordpress"
   ]
