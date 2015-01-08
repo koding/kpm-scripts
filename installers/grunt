@@ -11,9 +11,11 @@ set -l USERNAME     $USER
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
 if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
   echo "
-$PROG_NAME requires at least "(math $REQ_STORAGE / 1024)"MB storage, \
-and you have "(math $available_storage / 1024)"MB free.
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
 
 Please free up some space, and try again. You can start by deleting any
 large files or directories in your home directory or delete software that
@@ -30,7 +32,7 @@ end
 # ### Check if already installed
 if which grunt > /dev/null
   echo "
-$PROG_NAME is already installed. It can be started with the following \
+$PROG_NAME is already installed. It can be run with the following \
 command:
 
     \$ grunt
@@ -70,10 +72,12 @@ end
 
 # ## Complete
 echo "
-Installation complete, and $PROG_NAME is now available.
-To use:
-\$ grunt
-In a directory containing a properly formatted Gruntfile and package.json.
+Installation complete, and $PROG_NAME is now available. To use $PROG_NAME,
+run the following command In a directory containing a properly formatted
+Gruntfile and package.json.
+
+  \$ grunt
+
 See http://gruntjs.com/getting-started for more information.
 "
 
