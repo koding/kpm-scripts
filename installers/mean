@@ -85,7 +85,15 @@ end
 
 # ## Install
 # ### build-essential - These will be needed for the user to npm install a mean project without getting bson errors
-sudo apt-get install gcc make build-essential
+sudo apt-get install -y gcc make build-essential
+or begin
+  set -l err $status
+  echo "Error: Failure installing apt dependencies"
+  echo "Error: Failure installing gcc, make, build-essential" >&2
+  exit $err
+end
+
+
 
 # ### mean
 sudo npm install -g mean-cli
