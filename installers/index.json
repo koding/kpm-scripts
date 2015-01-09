@@ -10,6 +10,7 @@
     "meteor",
     "mysql",
     "mongodb",
+    "nginx",
     "phpmyadmin",
     "pip",
     "redis",
