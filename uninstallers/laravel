@@ -1,0 +1,59 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Laravel"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which laravel > /dev/null
+  echo "
+An installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 1
+end
+# ### Check composer requirement
+if not which composer > /dev/null
+echo "
+composer is required to uninstall the kpm installation of
+$PROG_NAME. Please install it with the following command:
+
+    \$ kpm install composer
+"
+end
+
+
+
+# ## Uninstall
+composer global remove laravel/installer
+or begin
+  set -l err $status
+  echo "Error: Failed to uninstall $PROG_NAME"
+  echo "Error: composer remove failed" >&2
+  exit $err
+end
+
+
+
+# ## Remove symlink
+# Don't error here, just warn
+sudo rm /usr/local/bin/laravel
+or begin
+  set -l err $status
+  echo "Warning: Failed to remove laravel symlink"
+  echo "Warning: Symlink removal failed. Exit: $err" >&2
+  # Don't exit
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

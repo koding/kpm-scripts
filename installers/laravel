@@ -1,0 +1,134 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Composer"
+set -l REQ_STORAGE  2116
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if which laravel > /dev/null
+  echo "
+$PROG_NAME is already installed. To create a $PROG_NAME app, use the
+laravel command as seen below:
+
+    \$ cd ~/Web
+    \$ laravel new blog
+
+And then visit your $PROG_NAME app at:
+
+    $USERNAME.koding.io/blog
+"
+end
+# ### Composer installed?
+if not which composer > /dev/null
+  echo "
+$PROG_NAME installation requires that composer is already installed.
+Please install it with the following command:
+
+    \$ kpm install composer
+"
+  echo "Req Error: composer not installed" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+
+
+# ## Dependencies
+sudo apt-get install -y php5 php5-json php5-curl php5-mcrypt
+or begin
+  set -l err $status
+  echo "Error: Failure installing dependencies"
+  echo "Error: apt-get install deps failed" >&2
+  exit $err
+end
+
+
+
+# ## Enable mcrypt
+sudo php5enmod mcrypt
+or begin
+  set -l err $status
+  echo "Error: Failure enabling mcrypt"
+  echo "Error: php5enmod mycrpt failed" >&2
+  exit $err
+end
+
+
+
+# ## Install
+composer global require "laravel/installer=~1.1"
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME"
+  echo "Error: composer global require failed" >&2
+  exit $err
+end
+
+
+
+# ## Symlink Laravel
+# As a workaround to Composer's current "bin issue" (not exposing bin
+# to path), we'll symlink the laravel command to usr local.
+sudo ln -s ~/.composer/vendor/bin/laravel /usr/local/bin/laravel
+or begin
+  set -l err $status
+  echo "Error: Error symlinking laravel"
+  echo "Error: Error symlinking laravel" >&2
+  exit $err
+end
+
+
+
+# ## Create default project
+# Not currently creating the project. Not sure if we want to or not,
+# from a UX standpoint.
+#composer create-project laravel/laravel --prefer-dist ~/Web/laravel
+#or begin
+#  set -l err $status
+#  echo "Error: Failure creating the default project"
+#  echo "Error: composer create-project failed" >&2
+#  exit $err
+#end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. To create a $PROG_NAME app, use the
+laravel command as seen below:
+
+    \$ cd ~/Web
+    \$ laravel new blog
+
+And then visit your $PROG_NAME app at:
+
+    $USERNAME.koding.io/blog
+"
+end
+main
+# vim: set filetype=fish:
+
