@@ -108,6 +108,49 @@ Installations should not continue if the environment is not as expected.
 Where applicable, messages should be copied from existing scripts for a 
 consistent user experience.
 
+### Exit Statuses
+
+After each command, you should check for a non-zero exit status. After 
+informing the user that something went wrong *(in a beginner friendly 
+way!)*, you should exit with the same status that the command exited 
+with. This may mean logging the error into a temporary variable, and 
+logging it.
+
+Fish Shell Example:
+
+```fish
+sudo apt-get install foo
+or begin
+  set -l err $status
+  echo "Error: Failed to install foo"
+  exit $err
+end
+```
+
+In this Fish Shell example, we run the command like normal. After the 
+command runs, `or` is triggered if the `$status` is not-zero. `begin` 
+starts a codeblock.
+
+In the `begin` codeblock, we store the `$status` into the `err` variable, 
+because `echo` will set `$status` back to zero. We then `exit $err`.
+
+### Debug Messages
+
+In kpm, `STDERR` is considered a debug stream. Print errors, or any debug 
+information desired. By default, kpm does not display this debug 
+information to the user.
+
+If a command fails, as in the exit status example above, we should log a 
+beginner-friendly message to the user to inform them of the error. Don't 
+bother including detailed information here, save that for the debug 
+print. You can print to STDERR *(debug)*, as seen below:
+
+```fish
+echo "This is a debug message" >&2
+```
+
+The `>&2` syntax forwards the output of `echo` to STDERR. Kpm will then 
+record this information depending on user configuration.
 
 
 
