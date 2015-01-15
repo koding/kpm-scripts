@@ -18,6 +18,7 @@
     "redis",
     "tomcat",
     "ungit",
+    "vnc",
     "wordpress"
   ]
 }
