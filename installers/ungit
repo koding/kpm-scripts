@@ -1,6 +1,5 @@
 #!/usr/bin/env fish
-
-
+function main
 # ## Config
 set -l PROG_NAME    "Ungit"
 set -l REQ_STORAGE  108328
@@ -111,6 +110,6 @@ You can access $PROG_NAME at the following address:
 
     $USERNAME.koding.io:8448
 "
-exit 0
-
+end
+main
 # vim: set filetype=fish:
