@@ -22,6 +22,15 @@ And then visit your $PROG_NAME app at:
     $USERNAME.koding.io/blog
 "
 end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
 # ### Composer installed?
 if not which composer > /dev/null
   echo "
