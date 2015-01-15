@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 function main
 # ## Config
-set -l PROG_NAME    "Composer"
+set -l PROG_NAME    "Laravel"
 set -l REQ_STORAGE  2116
 set -l USERNAME     $USER
 
