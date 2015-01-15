@@ -1,9 +1,11 @@
 {
   "installers": [
     "codeigniter",
+    "composer",
     "django",
     "dropbox",
     "ftp",
+    "laravel",
     "meteor",
     "mysql",
     "mongodb",
