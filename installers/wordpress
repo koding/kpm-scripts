@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-
+function main
 # ## Config
 set -l PROG_NAME    "Wordpress"
 set -l REQ_STORAGE  20704
@@ -233,5 +233,6 @@ the following address:
 
     $USERNAME.koding.io/wordpress
 "
-
+end
+main
 # vim: set filetype=fish:

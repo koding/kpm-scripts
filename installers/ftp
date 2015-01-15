@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-
+function main
 # ## Config
 set -l PROG_NAME    "ProFTPd"
 set -l REQ_STORAGE  4764
@@ -119,5 +119,6 @@ end
 echo "
 Installation complete
 "
-
+end
+main
 # vim: set filetype=fish:

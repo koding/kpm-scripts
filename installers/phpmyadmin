@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-
+function main
 # ## FUNCTIONS
 # ### Password
 function get_password
@@ -241,5 +241,6 @@ the following address:
 
     $USERNAME.koding.io/phpmyadmin
 "
-
+end
+main
 # vim: set filetype=fish:

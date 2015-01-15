@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-
+function main
 # ## Config
 set -l PROG_NAME    "MySQL"
 set -l REQ_STORAGE  124696
@@ -107,5 +107,6 @@ end
 echo "
 Installation complete
 "
-
+end
+main
 # vim: set filetype=fish:
