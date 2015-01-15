@@ -1,10 +1,12 @@
 {
   "installers": [
     "codeigniter",
+    "composer",
     "django",
     "dropbox",
     "ftp",
     "grunt",
+    "laravel",
     "mean",
     "mean-io-stack",
     "memcached",
