@@ -47,6 +47,7 @@ end
 
 
 # ## Get the desired vnc password
+echo -e "\n"
 stty -echo < /dev/tty
 for x in (seq 3)
   echo -n "Enter your desired vnc password: "
