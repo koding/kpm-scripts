@@ -65,6 +65,10 @@ not need.
 You can also upgrade your account to get more space, at the following url
 
     https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
 "
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
