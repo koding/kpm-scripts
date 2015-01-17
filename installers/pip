@@ -45,6 +45,17 @@ end
 
 
 
+# ## Update
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failure updating"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
 # ## Install
 sudo apt-get install -y python-pip
 or begin
