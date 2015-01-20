@@ -14,12 +14,13 @@ if which laravel > /dev/null
 $PROG_NAME is already installed. To create a $PROG_NAME app, use the
 laravel command as seen below:
 
-    \$ cd ~/Web
     \$ laravel new blog
+    \$ cd blog
+    \$ php artisan serve --host 0.0.0.0
 
 And then visit your $PROG_NAME app at:
 
-    $USERNAME.koding.io/blog
+    $USERNAME.koding.io:8000
 "
 end
 # ### User not root
@@ -133,12 +134,13 @@ echo "
 $PROG_NAME installation complete. To create a $PROG_NAME app, use the
 laravel command as seen below:
 
-    \$ cd ~/Web
     \$ laravel new blog
+    \$ cd blog
+    \$ php artisan serve --host 0.0.0.0
 
 And then visit your $PROG_NAME app at:
 
-    $USERNAME.koding.io/blog
+    $USERNAME.koding.io:8000
 "
 end
 main
