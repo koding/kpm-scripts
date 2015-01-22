@@ -1,0 +1,140 @@
+[
+  {
+    "command": "codeigniter",
+    "name": "codeigniter",
+    "description": "A PHP web framework built with a small footprint",
+    "tags": ["php"]
+  },
+  {
+    "command": "composer",
+    "name": "composer",
+    "description": "A package manager tool for PHP",
+    "tags": ["php"]
+  },
+  {
+    "command": "django",
+    "name": "django",
+    "description": "A popular Python web framework",
+    "tags": ["python"]
+  },
+  {
+    "command": "dropbox",
+    "name": "dropbox",
+    "description": "The official Dropbox command line client",
+    "tags": ["storage"]
+  },
+  {
+    "command": "ftp",
+    "name": "ftp",
+    "description": "An FTP server powered by ProFTPd",
+    "tags": ["file transfer"]
+  },
+  {
+    "command": "grunt",
+    "name": "grunt",
+    "description": "A NodeJS task runner and build tool",
+    "tags": ["node", "nodejs"]
+  },
+  {
+    "command": "laravel",
+    "name": "laravel",
+    "description": "A PHP web framework with expressive and elegant syntax",
+    "tags": ["php"]
+  },
+  {
+    "command": "mean",
+    "name": "mean",
+    "description": "A full stack javascript framework",
+    "tags": ["javascript", "node", "nodejs", "angularjs", "expressjs"]
+  },
+  {
+    "command": "mean-io-stack",
+    "name": "mean-io-stack",
+    "description": "Installs everything needed for a MeanJS installation",
+    "tags": ["javascript", "node", "nodejs", "mongodb", "mongo"]
+  },
+  {
+    "command": "memcached",
+    "name": "memcached",
+    "description": "A high-performance memory object caching system",
+    "tags": ["database"]
+  },
+  {
+    "command": "meteor",
+    "name": "meteor",
+    "description": "A full stack javascript framework",
+    "tags": ["javascript", "node", "nodejs"]
+  },
+  {
+    "command": "mongodb",
+    "name": "mongodb",
+    "description": "A popular NoSQL document database",
+    "tags": ["database"]
+  },
+  {
+    "command": "mysql",
+    "name": "mysql",
+    "description": "A popular relational database",
+    "tags": ["database"]
+  },
+  {
+    "command": "nginx",
+    "name": "nginx",
+    "description": "A HTTP and reverse proxy server",
+    "tags": ["web server"]
+  },
+  {
+    "command": "novnc",
+    "name": "novnc",
+    "description": "A vnc client using HTML5 (WebSockets, Canvas)",
+    "tags": ["vnc"]
+  },
+  {
+    "command": "phpmyadmin",
+    "name": "phpmyadmin",
+    "description": "A MySQL database management tool",
+    "tags": ["php", "mysql", "database"]
+  },
+  {
+    "command": "pip",
+    "name": "pip",
+    "description": "A Python package manager",
+    "tags": ["python"]
+  },
+  {
+    "command": "rails",
+    "name": "rails",
+    "description": "A Ruby full-stack web framework",
+    "tags": ["ruby"]
+  },
+  {
+    "command": "redis",
+    "name": "redis",
+    "description": "An advanced key-value cache and store",
+    "tags": ["database"]
+  },
+  {
+    "command": "tomcat",
+    "name": "tomcat",
+    "description": "A Java web server and servlet container",
+    "tags": ["java"]
+  },
+  {
+    "command": "ungit",
+    "name": "ungit",
+    "description": "A web based interface for Git",
+    "tags": ["git"]
+  },
+  {
+    "command": "vnc",
+    "name": "vnc",
+    "description": "A vnc server powered by TightVNC",
+    "tags": ["vnc"]
+  },
+  {
+    "command": "wordpress",
+    "name": "wordpress",
+    "description": "A web software for building websites and blogs",
+    "tags": ["php"]
+  }
+]
