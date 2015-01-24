@@ -1,0 +1,242 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Wordpress"
+set -l REQ_STORAGE  20704
+set -l USERNAME     $USER
+set -l DBNAME       "wordpress_db"
+set -l DBUSER       "root"
+set -l INSTALL_LOC  ~/Web/wordpress
+
+# ## Check Requirements
+# ### Existing Install
+if test -e $INSTALL_LOC
+  echo "
+The install location $INSTALL_LOC already exists. Please move that directory
+before installing $PROG_NAME in that location. If wordpress is properly
+installed there, you can access it at the following address:
+
+    $USERNAME.koding.io/wordpress
+"
+  echo "Req Error: Install location occupied" >&2
+  exit 1
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  echo "Req Error: Apache not installed" >&2
+  exit 1
+end
+# ### MySQL
+if not which mysql > /dev/null
+  echo "
+$PROG_NAME requires that MySQL is already installed. Please install
+MySQL first.
+"
+  echo "Req Error: Mysql not installed" >&2
+  exit 1
+end
+# ### User not root
+# Ensure that the user is not `root`, because the default Apache
+# web directory is /home/user/Web, where as root would
+# install it to /root/Web
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  echo "
+$PROG_NAME requires at least "(math $REQ_STORAGE / 1024)"MB storage, \
+and you have "(math $available_storage / 1024)"MB free.
+
+Please free up some space, and try again. You can start by deleting any large
+files or directories in your home directory or delete software that you do
+not need.
+
+You can also upgrade your account to get more space, at the following url
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  # Add this message to the above echo, once the guide exists
+  #Please refer to the following guide to learn how to list and remove unused packages.
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+
+
+# ## Start MySQL
+# We're restarting here, to not fail if mysql was
+# already running. Now, if it fails, mysql truly
+# failed to start.
+echo "Checking MySQL status"
+sudo service mysql restart > /dev/null
+or begin
+  set -l err $status
+  echo "Error: Failed to restart MySQL."
+  echo "Error: Failed to restart MySQL." >&2
+  exit $err
+end
+
+
+
+# ## Get MySQL User Password
+stty -echo < /dev/tty
+for x in (seq 3)
+  echo -n "Enter your MySQL root user password: "
+  if not read password < /dev/tty
+    stty echo < /dev/tty
+    echo "Aborting after empty password" >&2
+    exit 1
+  end
+  if test -n $password
+    break
+  else if test $x -eq 3
+    echo -e "\nAborting after 3 empty inputs."
+    stty echo < /dev/tty
+    echo "Aborting after 3 password attempts" >&2
+    exit 1
+  else
+    echo -e "\nYou must enter a password. Please retry."
+  end
+end
+stty echo < /dev/tty
+
+
+
+# ## Test mysql password
+mysql -uroot -p$password -e ""
+or begin
+  set -l err $status
+  echo "Error: Invalid mysql root user authorization"
+  echo "Error: Invalid mysql root user authorization" >&2
+  exit $err
+end
+
+
+
+# ## Setup the database
+mysql -uroot -p$password -e "CREATE DATABASE wordpress_db;"
+or begin
+  set -l err $status
+  echo "Error: Failed to setup database."
+  echo "Error: Failed to setup database." >&2
+  exit $err
+end
+
+
+
+# ## Install a required package
+echo "
+Installing php5-mysql"
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failure updating apt-get"
+  echo "Error: Failure updating apt-get" >&2
+  exit $err
+end
+sudo apt-get install -y php5-mysql
+or begin
+  set -l err $status
+  echo "Error: Failure to install php5-mysql"
+  echo "Error: Failure to install php5-mysql" >&2
+  exit $err
+end
+sudo service apache2 restart
+or begin
+  set -l err $status
+  echo "Error: Failure restarting apache."
+  echo "Error: Failure restarting apache." >&2
+  exit $err
+end
+
+
+
+# ## Install Wordpress
+echo "Installing $PROG_NAME"
+mkdir -p $INSTALL_LOC
+cd $INSTALL_LOC
+curl -sfL -O https://wordpress.org/latest.tar.gz
+or begin
+  set -l err $status
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: Failed to download $PROG_NAME" >&2
+  exit $err
+end
+tar --strip-components=1 -zxf latest.tar.gz
+or begin
+  set -l err $status
+  echo "Error: Failure to extract $PROG_NAME from archive"
+  echo "Error: Failure to extract $PROG_NAME from archive" >&2
+  exit $err
+end
+rm latest.tar.gz
+
+
+
+# ## Setup the config
+cp wp-config-sample.php wp-config.php
+or begin
+  set -l err $status
+  echo "Error: Unable to find wp-config-sample.php"
+  echo "Error: Unable to find wp-config-sample.php" >&2
+  exit $err
+end
+# We should be failing after each sed, but so far i haven't found
+# a (sane) method fail on sed not matching a pattern.
+sed -i -e "s/database_name_here/$DBNAME/g" wp-config.php
+sed -i -e "s/username_here/$DBUSER/g" wp-config.php
+sed -i -e "s/password_here/$password/g" wp-config.php
+
+
+
+# ## Set permissions
+sudo chown -R $USERNAME: ./
+or begin
+  set -l err $status
+  echo "Error: Failre to chown $INSTALL_LOC"
+  echo "Error: Failre to chown $INSTALL_LOC" >&2
+  exit $err
+end
+mkdir -p wp-content/uploads
+sudo chown -R www-data: wp-content/uploads
+or begin
+  set -l err $status
+  echo "Error: Failure to chown $INSTALL_LOC/wp-content/uploads"
+  echo "Error: Failure to chown $INSTALL_LOC/wp-content/uploads" >&2
+  exit $err
+end
+sudo chmod -R 755 wp-content/uploads
+or begin
+  set -l err $status
+  echo "Error: Failure to chmod $INSTALL_LOC/wp-content/uploads"
+  echo "Error: Failure to chmod $INSTALL_LOC/wp-content/uploads" >&2
+  exit $err
+end
+
+
+
+# ## End
+echo "
+Installation complete. You can access your $PROG_NAME installation at
+the following address:
+
+    $USERNAME.koding.io/wordpress
+"
+end
+main
+# vim: set filetype=fish:

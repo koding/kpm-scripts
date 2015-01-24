@@ -1,0 +1,56 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Dropbox"
+set -l REQ_STORAGE  4056
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: User root"
+  exit 1
+end
+# ### Already installed?
+if test -e ~/.dropbox-dist
+  echo "
+$PROG_NAME is already installed. To run start Dropbox, run the following
+command and follow the onscreen instructions.
+
+    \$ ./.dropbox-dist/dropboxd
+
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+
+
+
+# ## Install
+curl -L "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xvz
+or begin
+  set -l err $status
+  echo "Error: Failure downloading Dropbox"
+  echo "Error: curl and tar failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. To run start Dropbox, run the following
+command and follow the onscreen instructions.
+
+    \$ ./.dropbox-dist/dropboxd
+
+"
+end
+main
+# vim: set filetype=fish:

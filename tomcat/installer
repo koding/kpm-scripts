@@ -1,0 +1,86 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Tomcat7"
+set -l REQ_STORAGE  34032
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+# Not sure this is the best way to test for valid installation of Tomcat.
+# A process would likely be better.
+if test -e /var/lib/tomcat7
+  echo "
+$PROG_NAME is already installed. You can access the default $PROG_NAME
+server at the following address:
+
+    $USERNAME.koding.io:8080
+
+If you need to start it, run the following command:
+
+  \$ sudo service tomcat7 start
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+
+
+# ## Install
+sudo apt-get install -y tomcat7 \
+  tomcat7-docs tomcat7-admin tomcat7-examples
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME"
+  echo "Error: apt-get failed to install $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. You can access the default $PROG_NAME
+server at the following address:
+
+    $USERNAME.koding.io:8080
+"
+end
+main
+# vim: set filetype=fish:
+
