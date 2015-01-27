@@ -85,6 +85,11 @@
     "tags": ["php", "mysql", "database"]
   },
   {
+    "name": "phppgadmin",
+    "description": "A PostgreSQL database management tool",
+    "tags": ["php", "postgresql", "database"]
+  },
+  {
     "name": "pip",
     "description": "A Python package manager",
     "tags": ["python"]
