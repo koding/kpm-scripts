@@ -1,1 +1,64 @@
-../composer/installer
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Composer"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if which composer > /dev/null
+  echo "
+$PROG_NAME is already installed. You can access it by running the
+following command:
+
+    \$ composer
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### php installed?
+if not which php > /dev/null
+  echo "
+$PROG_NAME requires that php is already installed. Please install php
+first.
+"
+  echo "Req Error: php not installed" >&2
+  exit 1
+end
+
+
+
+# ## Install
+curl -sS https://getcomposer.org/installer | sudo php -- \
+  --filename=composer \
+  --install-dir=/usr/local/bin \
+  --quiet
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME"
+  echo "Error: curl and php failed to install $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Add bin path
+# TODO: Add bin to path
+# Not sure what the best way is to do this yet,
+# since this involves the users shell and environment.
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. You can access it by running the
+following command:
+
+    \$ composer
+"
+end
+main
+# vim: set filetype=fish:
+

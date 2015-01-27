@@ -1,1 +1,74 @@
-../mean-io-stack/installer
+#!/usr/bin/env fish
+function main
+
+# ## Config
+set -l PROG_NAME    "Mean.io Stack"
+set -l REQ_STORAGE  765628
+set -l USERNAME     $USER
+
+# ## Set installs in this bundle
+set -l bundled mongodb grunt mean
+set -l mongodb "mongod"
+set -l grunt "grunt"
+set -l mean "mean"
+set -l installed
+
+# ## Check Requirements
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url
+
+    https://koding.com/Pricing
+
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+# ## Install everything in the bundle
+for bundle in $bundled
+	if not set -q failed
+		if not which $$bundle > /dev/null
+   		 	echo "Installing $bundle"
+			kpm install $bundle
+   		 	#fish ./$bundle
+			if not which $$bundle > /dev/null
+				set -l failed
+			else
+				set installed  $installed  $bundle
+			end
+		else
+   			echo "$bundle already installed, skipping."
+		end
+	end
+end
+
+# ## Revert if any part failed
+if set -q failed
+	echo "One of the bundled installs failed."
+	echo "Reverting all installs performed in this package to return system to original state"
+	for install in $installed
+		echo "reverting $install"
+		kpm uninstall $install
+	end
+end
+
+# ## Complete
+echo "---------------------------------------------------------------------------------"
+echo "Installation complete, all installs in the $PROG_NAME completed successfully.  "
+echo "---------------------------------------------------------------------------------"
+
+end
+main
+# vim: set filetype=fish:

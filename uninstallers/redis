@@ -1,1 +1,38 @@
-../redis/uninstaller
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Redis"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which redis-server > /dev/null
+  echo "
+An installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 1
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y redis-server
+or begin
+  set -l err $status
+  echo "Error: Failed to uninstall $PROG_NAME"
+  echo "Error: apt-get purge failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

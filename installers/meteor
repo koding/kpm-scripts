@@ -1,1 +1,129 @@
-../meteor/installer
+#!/usr/bin/env fish
+function main
+
+
+# ## Config
+set -l PROG_NAME    "MeteorJS"
+set -l REQ_STORAGE  806128
+set -l USERNAME     $USER
+
+# ## Check Requirements
+# ### Check if it's already installed
+if which meteor > /dev/null
+  echo "
+$PROG_NAME is already installed. To create a $PROG_NAME app, use the meteor
+command as seen below:
+
+    \$ meteor create ~/my_cool_app
+    \$ cd ~/my_cool_app
+    \$ meteor
+
+Or see the docs at:
+
+    http://docs.meteor.com
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### User not root
+# Ensure that the user is not `root`, because the default Apache
+# web directory is /home/user/Web, where as root would
+# install it to /root/Web
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Logged in as root" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  echo "
+$PROG_NAME requires at least "(math $REQ_STORAGE / 1024)"MB storage, \
+and you have "(math $available_storage / 1024)"MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software
+that you do not need.
+
+You can also upgrade your account to get more space, at the following url
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+
+
+# ## Download
+echo "
+Downloading Meteor
+"
+mkdir -p /tmp
+curl --progress-bar --fail -o "/tmp/meteor.tar.gz" \
+  "https://d3sqy0vbqsdhku.cloudfront.net/packages-bootstrap/1.0/meteor-bootstrap-os.linux.x86_64.tar.gz"
+or begin
+  set -l err $status
+  echo "Error: Download of MeteorJS failed"
+  echo "Error: Download of MeteorJS failed" >&2
+  exit $err
+end
+
+
+
+# ## Unzip archive
+tar -C ~ -xzf "/tmp/meteor.tar.gz"
+or begin
+  set -l err $status
+  echo "Error: Extracting MeteorJS failed"
+  echo "Error: Extracting MeteorJS failed" >&2
+  exit $err
+end
+
+
+
+# ## Link bin
+sudo ln -s ~/.meteor/meteor /usr/local/bin/meteor
+or begin
+  set -l err $status
+  echo "Error: Linking meteor bin failed"
+  echo "Error: Linking meteor bin failed" >&2
+  exit $err
+end
+
+
+
+
+# ## Cleanup temp files
+rm -f "/tmp/meteor.tar.gz"
+# I don't believe -f can even throw a non-zero exit
+
+
+
+# ## End message
+echo "
+Installation complete.
+
+To create a meteor app, use the meteor command as seen below:
+
+    \$ meteor create ~/my_cool_app
+    \$ cd ~/my_cool_app
+    \$ meteor
+
+Or see the docs at:
+
+    http://docs.meteor.com
+"
+
+
+end
+main
+
+# vim: set filetype=fish:
