@@ -74,24 +74,6 @@ end
 
 
 
-# This message is here due to a pause on apt-get update that might
-# confuse the user. A vague message will help them know that it isn't
-# froze.
-echo -e "\nUpdating.."
-
-
-
-# ## Update
-sudo apt-get update
-or begin
-  set -l err $status
-  echo "Error: Failed to update package list"
-  echo "Error: apt-get update failed" >&2
-  exit $err
-end
-
-
-
 # ## Install
 sudo apt-get install -y grive
 or begin
