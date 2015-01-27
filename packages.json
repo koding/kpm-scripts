@@ -25,6 +25,11 @@
     "tags": ["file transfer"]
   },
   {
+    "name": "gdrive",
+    "description": "The official Google Drive command line client",
+    "tags": ["storage"]
+  },
+  {
     "name": "grunt",
     "description": "A NodeJS task runner and build tool",
     "tags": ["node", "nodejs"]
