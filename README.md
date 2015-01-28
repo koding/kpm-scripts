@@ -15,7 +15,7 @@ beginner friendly installation and usage guide, [click here][user guide].
 To install the bin, run the following command.
 
 ```text
-curl -sSL https://raw.githubusercontent.com/koding/kpm-scripts/master/installers/meta | fish
+curl -sSL https://raw.githubusercontent.com/koding/kpm-scripts/master/kpm/installer | fish
 ```
 
 For more detailed instructions, see the [user guide][user guide].

@@ -1,0 +1,62 @@
+#!/usr/bin/env fish
+#
+# # Koding Package Manager Installer
+#
+# ## **Important**
+#
+# This installer is used directly by curls, as well as within KPM,
+# so it needs to handle both nicely. This means that it should **NOT**
+# print to STDERR as any curl users will see the STDERR prints.
+#
+function main
+# ## Config
+set -l PROG_NAME    "Koding Package Manager"
+set -l USERNAME     $USER
+#set -l TAG          "v0.2.0"
+set -l TAG          "v0.1.2"
+set -l TMPLOC       "/tmp/kpmbininstaller"
+set -l BINLOC       "/usr/local/bin/kpm"
+
+
+
+# ## Download
+sudo curl -L -o $TMPLOC \
+  "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
+or begin
+  set -l err $status
+  echo "Error $err: Failed to download $PROG_NAME $TAG"
+  exit $err
+end
+
+
+
+# ## Set perms
+sudo chmod +x "$TMPLOC"
+or begin
+  set -l err $status
+  echo "Error $err: Failed to set $PROG_NAME permissions"
+  exit $err
+end
+
+
+
+# ## Move kpm to the bin loc
+sudo mv "$TMPLOC" "$BINLOC"
+or begin
+  set -l err $status
+  echo "Error $err: Failed to move $PROG_NAME to $BINLOC"
+  exit $err
+end
+
+
+
+set -l downloadedVer (kpm --version | awk '{print $2}')
+echo "
+$PROG_NAME $downloadedVer installation is complete. For help,
+run the following command:
+
+    \$ kpm --help
+"
+end
+main
+# vim: set filetype=fish:
