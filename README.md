@@ -35,7 +35,13 @@ For more detailed instructions, see the [user guide][user guide].
 
 You can add an Installer and Uninstaller script for just about anything.  
 Simply make a pull request against this repo and placing your script into 
-the `./installers` and `./uninstallers`.
+a new folder with the name of your script, eg `./scriptname` *(where 
+`scriptname` is the name of your script)*, and name the script 
+`./scriptname/installer` or `./scriptname/uninstaller`.
+
+You can also place config files, zip files, or anything else you need in
+that folder as well. Just make sure to keep the names `installer` and 
+`uninstaller` reserved for the actual install/uninstall scripts.
 
 With that said, your script must adhere to various standards to ensure a 
 consistent user experience between all of the scripts. Below, we outline 
@@ -56,8 +62,7 @@ be removed in the near future.
 
 The name of the script is very important, as the name of the script 
 directly correlates to the name of the command. Every script seen in the 
-`./installers` directory is accessible from `kpm install 
-scriptname`.
+`./foo/installer` format is accessible from `kpm install foo`.
 
 For example, if you named your script `hello-world`, then it could be 
 installed with:
