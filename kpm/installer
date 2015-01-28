@@ -12,8 +12,7 @@ function main
 # ## Config
 set -l PROG_NAME    "Koding Package Manager"
 set -l USERNAME     $USER
-#set -l TAG          "v0.2.0"
-set -l TAG          "v0.1.2"
+set -l TAG          "v0.2.0"
 set -l TMPLOC       "/tmp/kpmbininstaller"
 set -l BINLOC       "/usr/local/bin/kpm"
 
