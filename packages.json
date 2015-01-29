@@ -20,6 +20,11 @@
     "tags": ["storage"]
   },
   {
+    "name": "elasticsearch",
+    "description": "A powerful search and analytics engine",
+    "tags": ["search"]
+  },
+  {
     "name": "ftp",
     "description": "An FTP server powered by ProFTPd",
     "tags": ["file transfer"]
