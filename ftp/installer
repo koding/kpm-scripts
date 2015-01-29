@@ -13,9 +13,17 @@ set -l USERNAME     $USER
 # be set again.
 if which proftpd > /dev/null
   echo "
-ProFTPd is already installed. It can be started with the following command:
+A previous $PROG_NAME installation is detected. It can be started with
+the following command:
 
-    sudo service proftpd start
+    \$ sudo service proftpd start
+
+To access your FTP server, use the FTP client of your choice with the
+following information:
+
+    HOST: $USERNAME.koding.io
+    USER: $USERNAME
+    PASS: YOURPASS
 "
   echo "Req Error: Already installed" >&2
   exit 1
@@ -121,7 +129,12 @@ end
 
 # ## End
 echo "
-Installation complete
+$PROG_NAME installation complete. To access it, use the FTP client of
+your choice with the following information:
+
+    HOST: $USERNAME.koding.io
+    USER: $USERNAME
+    PASS: YOURPASS
 "
 end
 main
