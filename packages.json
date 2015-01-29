@@ -22,7 +22,7 @@
   {
     "name": "ftp",
     "description": "An FTP server powered by ProFTPd",
-    "tags": ["file transfer"]
+    "tags": ["file transfer", "ftp"]
   },
   {
     "name": "gdrive",
@@ -118,6 +118,11 @@
     "name": "vnc",
     "description": "A vnc server powered by TightVNC",
     "tags": ["vnc"]
+  },
+  {
+    "name": "vsftpd",
+    "description": "An FTP server powered by vsFTPd",
+    "tags": ["file transfer", "ftp"]
   },
   {
     "name": "wordpress",
