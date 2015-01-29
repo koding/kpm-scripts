@@ -35,6 +35,11 @@
     "tags": ["node", "nodejs"]
   },
   {
+    "name": "jenkins",
+    "description": "An extensible continuous integration server",
+    "tags": ["continuous integration", "ci"]
+  },
+  {
     "name": "laravel",
     "description": "A PHP web framework with expressive and elegant syntax",
     "tags": ["php"]

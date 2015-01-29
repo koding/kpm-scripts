@@ -1,0 +1,49 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Jenkins"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e /var/lib/jenkins
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 1
+end
+
+
+
+# ## Uninstall Deb
+sudo dpkg --purge jenkins
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME"
+  echo "Error: dpkg failed to uninstall" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall Deb
+sudo apt-get purge --auto-remove -y daemon
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
