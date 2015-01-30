@@ -10,6 +10,11 @@
     "tags": ["php"]
   },
   {
+    "name": "couchdb",
+    "description": "A NOSQL JSON oriented database",
+    "tags": ["database"]
+  },
+  {
     "name": "django",
     "description": "A popular Python web framework",
     "tags": ["python"]

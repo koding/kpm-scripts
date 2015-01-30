@@ -1,0 +1,49 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "CouchDB"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which couchdb > /dev/null
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 1
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y couchdb
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Remove repo
+sudo add-apt-repository --remove -y ppa:couchdb/stable
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME repo"
+  echo "Error: Failed to remove $PROG_NAME repo" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
