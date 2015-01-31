@@ -15,6 +15,11 @@
     "tags": ["database"]
   },
   {
+    "name": "cassandra",
+    "description": "A decentralized 'big data' database",
+    "tags": ["database"]
+  },
+  {
     "name": "django",
     "description": "A popular Python web framework",
     "tags": ["python"]
@@ -93,6 +98,11 @@
     "name": "novnc",
     "description": "A vnc client using HTML5 (WebSockets, Canvas)",
     "tags": ["vnc"]
+  },
+  {
+    "name": "oracle-java7",
+    "description": "Oracle's Java Development Kit 7",
+    "tags": ["java"]
   },
   {
     "name": "phpmyadmin",
