@@ -90,6 +90,11 @@
     "tags": ["vnc"]
   },
   {
+    "name": "oracle-java7",
+    "description": "Oracle's Java Development Kit 7",
+    "tags": ["java"]
+  },
+  {
     "name": "phpmyadmin",
     "description": "A MySQL database management tool",
     "tags": ["php", "mysql", "database"]

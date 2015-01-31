@@ -18,34 +18,12 @@ end
 
 
 
-# ## Remove oracle PPA
-sudo add-apt-repository --remove -y ppa:webupd8team/java
-or begin
-  set -l err $status
-  echo "Error: Failed to remove oracle repository"
-  echo "Error: Failed to remove ppa:webupd8team/java" >&2
-  exit $err
-end
-
-
-
 # ## Uninstall Deb
 sudo dpkg --purge elasticsearch
 or begin
   set -l err $status
   echo "Error: Failed to remove $PROG_NAME"
   echo "Error: dpkg failed to uninstall" >&2
-  exit $err
-end
-
-
-
-# ## Uninstall Deb
-sudo apt-get purge --auto-remove -y daemon
-or begin
-  set -l err $status
-  echo "Error: Failed to remove $PROG_NAME dependencies"
-  echo "Error: apt-get failed to uninstall dependencies" >&2
   exit $err
 end
 

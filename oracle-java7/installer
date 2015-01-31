@@ -1,0 +1,96 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Oracle Java7"
+set -l REQ_STORAGE  440888
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+java -version 2>| grep -iq "se runtime"
+and java -version 2>| grep -iq "1.7"
+and begin
+  echo "
+A previous $PROG_NAME installation is detected.
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+
+
+# ## Update
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nUpdating.."
+sudo add-apt-repository -y ppa:webupd8team/java
+and sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to add Oracle repository"
+  echo "Error: Adding and updating with ppa:webupd8team/java" >&2
+  exit $err
+end
+
+
+
+# ## Allow non-interactive installation
+echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+
+
+# ## Install dependencies
+sudo apt-get install -y oracle-jdk7-installer
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME dependencies"
+  echo "Error: apt-get failed to install dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete.
+"
+end
+main
+# vim: set filetype=fish:
+
