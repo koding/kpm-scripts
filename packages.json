@@ -10,6 +10,11 @@
     "tags": ["php"]
   },
   {
+    "name": "cassandra",
+    "description": "A decentralized 'big data' database",
+    "tags": ["database"]
+  },
+  {
     "name": "django",
     "description": "A popular Python web framework",
     "tags": ["python"]
