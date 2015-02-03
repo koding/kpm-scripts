@@ -29,7 +29,7 @@ end
 
 
 
-# ## Uninstall Deb
+# ## Uninstall Dependencies
 sudo apt-get purge --auto-remove -y daemon
 or begin
   set -l err $status
