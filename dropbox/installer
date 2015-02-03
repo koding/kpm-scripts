@@ -20,15 +20,26 @@ end
 # ### Already installed?
 if test -e ~/.dropbox-dist
   echo "
-$PROG_NAME is already installed. To run start Dropbox, run the following
-command and follow the onscreen instructions.
+$PROG_NAME is already installed. Make sure to link your Dropbox account
+by running the following command and following the onscreen instructions.
 
-    \$ ./.dropbox-dist/dropboxd
+    \$ dropboxd
 
+After linking your Dropbox account, take a look at the Dropbox CLI for
+added functionality (such as excluding files), with the following command.
+
+    \$ dropbox
 "
   echo "Req Error: Already installed" >&2
   exit 1
 end
+
+
+
+# ## Download CLI
+sudo curl -o /usr/local/bin/dropbox \
+  -L "https://www.dropbox.com/download?dl=packages/dropbox.py"
+sudo chmod +x /usr/local/bin/dropbox
 
 
 
@@ -43,13 +54,23 @@ end
 
 
 
+# ## Symlink
+# Symlink the dropbox daemon for an easy UX
+sudo ln -s ~/.dropbox-dist/dropboxd /usr/local/bin/dropboxd
+
+
+
 # ## Success
 echo "
-$PROG_NAME installation complete. To run start Dropbox, run the following
-command and follow the onscreen instructions.
+$PROG_NAME installation complete. Make sure to link your Dropbox account
+by running the following command and following the onscreen instructions.
 
-    \$ ./.dropbox-dist/dropboxd
+    \$ dropboxd
 
+After linking your Dropbox account, take a look at the Dropbox CLI for
+added functionality (such as excluding files), with the following command.
+
+    \$ dropbox
 "
 end
 main

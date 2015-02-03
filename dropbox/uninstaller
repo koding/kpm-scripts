@@ -30,6 +30,8 @@ end
 # ## Uninstall
 rm -rf ~/.dropbox-dist
 rm -rf ~/.dropbox
+sudo rm /usr/local/bin/dropbox
+sudo rm /usr/local/bin/dropboxd
 
 
 
@@ -38,7 +40,7 @@ echo "
 $PROG_NAME has been uninstalled successfully.
 "
 if test -e ~/Dropbox
-  echo "Note that kpm **did not** remove your Dropbox files found
+  echo "Note that kpm *did not* remove your Dropbox files found
   in ~/Dropbox. You can remove that folder if those files are no longer
   desired.
   "
