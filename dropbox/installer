@@ -20,7 +20,7 @@ end
 # ### Already installed?
 if test -e ~/.dropbox-dist
   echo "
-$PROG_NAME is already installed. Make sure to link your Dropbox account
+$PROG_NAME is already installed. Don't forget to link your Dropbox account
 by running the following command and following the onscreen instructions.
 
     \$ dropboxd
