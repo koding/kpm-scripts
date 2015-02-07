@@ -1,0 +1,98 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "MediaWiki"
+set -l USERNAME     $USER
+set -l INSLOC       ~/Web/mediawiki
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e $INSLOC
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 1
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes configuration and all files found in the
+following location:
+
+    $INSLOC
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Remove files
+rm -rf $INSLOC
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME"
+  echo "Error: rm -rf failed.. this shouldn't be possible!" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y php5-mysql
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## reload apache
+# php5-mysql requires apache reload
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "error: Reloading apache failed"
+  echo "error: Reloading apache failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
