@@ -1,0 +1,157 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Cockpit"
+set -l REQ_STORAGE  100
+set -l USERNAME     $USER
+set -l VER          "0.13.0"
+set -l INSTLOC      ~/Web/cockpit
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if test -e "$INSTLOC"
+  echo "
+A previous $PROG_NAME installation is detected. To access it,
+visit the following link:
+
+    $USERNAME.koding.io/cockpit
+
+If you still need to install $PROG_NAME, visit the following URL:
+
+    $USERNAME.koding.io/cockpit/install
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+
+
+
+# ## Update
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nUpdating.."
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to update package list"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
+# ## Install dependencies
+sudo apt-get install -y php5-sqlite
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME dependencies"
+  echo "Error: apt-get failed to install dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Reload apache
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Error: Failure reloading Apache"
+  echo "Error: Failure reloading Apache" >&2
+  exit $err
+end
+
+
+
+# ## Download
+curl -Lo "/tmp/cockpit-$VER.tar.gz" \
+  "https://github.com/aheinze/cockpit/archive/$VER.tar.gz"
+or begin
+  set -l err $status
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: Downloading tar from $PROG_NAME repo failed" >&2
+  exit $err
+end
+
+
+
+# ## Untar & move
+tar -C "/tmp" -zxf "/tmp/cockpit-$VER.tar.gz"
+and mv "/tmp/cockpit-$VER" "$INSTLOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to extract and move $PROG_NAME"
+  echo "Error: Failed to extract and move $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Set permissions
+chmod 777 -R "$INSTLOC/storage"
+or begin
+  set -l err $status
+  echo "Error: Failed to set $PROG_NAME permissions"
+  echo "Error: Failed to set $PROG_NAME permissions" >&2
+  exit $err
+end
+
+
+
+ ## Cleanup
+sudo rm "/tmp/cockpit-$VER.tar.gz"
+or begin
+  set -l err $status
+  echo "Warning: Failed to cleanup temp file"
+  echo "Warning: Failed to cleanup tar file in temp dir" >&2
+  # Don't exit for warnings
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been partially installed. Next, simply visit the following
+URL to complete the installation.
+
+    $USERNAME.koding.io/cockpit/install
+"
+end
+main
+# vim: set filetype=fish:
+

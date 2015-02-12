@@ -20,6 +20,11 @@
     "tags": ["database"]
   },
   {
+    "name": "cockpit",
+    "description": "A CMS designed for simplicity",
+    "tags": ["wiki", "php"]
+  },
+  {
     "name": "django",
     "description": "A popular Python web framework",
     "tags": ["python"]
