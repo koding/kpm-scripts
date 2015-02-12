@@ -60,6 +60,11 @@
     "tags": ["php"]
   },
   {
+    "name": "mediawiki",
+    "description": "A wiki, originally for use on Wikipedia",
+    "tags": ["wiki", "php"]
+  },
+  {
     "name": "mean",
     "description": "A full stack javascript framework",
     "tags": ["javascript", "node", "nodejs", "angularjs", "expressjs"]
