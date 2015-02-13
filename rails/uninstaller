@@ -36,11 +36,24 @@ end
 # Note that we're not purging all dependencies, since some things
 # (like build-essentials) *may* be required by other programs. We're
 # only removing what we're resonable sure that isn't required.
-sudo apt-get purge -y ruby-dev libsqlite3-dev
+sudo apt-get purge -y libsqlite3-dev \
+  ruby2.0 ruby2.0-dev libssl-dev zlib1g-dev
 or begin
   set -l err $status
   echo "Error: Failure installing dependencies"
   echo "Error: apt-get install failed" >&2
+  exit $err
+end
+
+
+
+# ## Restore
+sudo ln -sf /usr/bin/ruby1.9.1 /usr/bin/ruby
+and sudo ln -sf /usr/bin/gem1.9.1 /usr/bin/gem
+or begin
+  set -l err $status
+  echo "Error: Failed to restore ruby default"
+  echo "Error: Failed to make ruby1.9.1 the default" >&2
   exit $err
 end
 

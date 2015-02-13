@@ -84,7 +84,8 @@ end
 
 
 # ## Install dependencies
-sudo apt-get install -y build-essential ruby-dev libsqlite3-dev
+sudo apt-get install -y build-essential libsqlite3-dev \
+  ruby2.0 ruby2.0-dev libssl-dev zlib1g-dev
 or begin
   set -l err $status
   echo "Error: Failure installing dependencies"
@@ -94,7 +95,20 @@ end
 
 
 
+# ## Make 2.0 the default
+sudo ln -sf /usr/bin/ruby2.0 /usr/bin/ruby
+and sudo ln -sf /usr/bin/gem2.0 /usr/bin/gem
+or begin
+  set -l err $status
+  echo "Error: Failed to set ruby2.0 to default"
+  echo "Error: Failed to set ruby2.0 and gem2.0 to default" >&2
+  exit $err
+end
+
+
+
 # ## Install
+echo "Installing rails, this can take a while.."
 sudo gem install rails --no-ri --no-rdoc
 or begin
   set -l err $status
