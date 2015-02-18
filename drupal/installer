@@ -1,0 +1,256 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Drupal"
+set -l REQ_STORAGE  100
+set -l USERNAME     $USER
+set -l INSTLOC      ~/Web/drupal
+set -l VER          "7.34"
+set -l DBNAME       "kpm_drupal_db"
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if test -e "$INSTLOC"
+  echo "
+A previous $PROG_NAME installation is detected. To access it,
+visit the following link:
+
+    $USERNAME.koding.io/drupal
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  echo "Req Error: Apache not installed" >&2
+  exit 1
+end
+# ### MySQL
+if not which mysql > /dev/null
+  echo "
+$PROG_NAME requires that MySQL is already installed. Please install
+MySQL with the following command:
+
+    \$ kpm install mysql
+"
+  echo "Req Error: Mysql not installed" >&2
+  exit 1
+end
+
+
+
+# ## Start MySQL
+# We're restarting here, to not fail if mysql was
+# already running. Now, if it fails, mysql truly
+# failed to start.
+echo "Checking MySQL status"
+sudo service mysql restart > /dev/null
+or begin
+  set -l err $status
+  echo "Error: Failed to ensure a working MySQL server"
+  echo "Error: Failed to restart MySQL." >&2
+  exit $err
+end
+
+
+
+# ## Get MySQL User Password
+stty -echo < /dev/tty
+for x in (seq 3)
+  echo -n "Enter your MySQL root user password: "
+  if not read password < /dev/tty
+    stty echo < /dev/tty
+    echo "Aborting after empty password" >&2
+    exit 1
+  end
+  if test -n $password
+    break
+  else if test $x -eq 3
+    echo -e "\nAborting after 3 empty inputs."
+    stty echo < /dev/tty
+    echo "Aborting after 3 password attempts" >&2
+    exit 1
+  else
+    echo -e "\nYou must enter a password. Please retry."
+  end
+end
+stty echo < /dev/tty
+echo ""
+
+
+
+# ## Test mysql password
+mysql -uroot -p$password -e ""
+or begin
+  set -l err $status
+  echo "Error: Invalid mysql root user authorization"
+  echo "Error: Invalid mysql root user authorization" >&2
+  exit $err
+end
+
+
+
+# ## Create Database
+mysql -u root -p$password -e "CREATE DATABASE $DBNAME; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON $DBNAME.* TO 'root'"
+or begin
+  set -l err $status
+  echo "Failed to create the $PROG_NAME database"
+  echo "Failed to create the $PROG_NAME database" >&2
+  exit $err
+end
+
+
+
+# ## Update
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nUpdating.."
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to update package list"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
+# ## Install dependencies
+sudo apt-get install -y php5-gd
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME dependencies"
+  echo "Error: apt-get failed to install dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Reload Apache
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Error: Failed to reload Apache"
+  echo "Error: Failed to reload Apache" >&2
+  exit $err
+end
+
+
+
+# ## Download
+sudo curl -L -o "/tmp/drupal-$VER.tar.gz" \
+  "http://ftp.drupal.org/files/projects/drupal-$VER.tar.gz"
+or begin
+  set -l err $status
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: Downloading tar.gz from drupal.org failed" >&2
+  exit $err
+end
+
+
+
+# ## Extract
+tar -C "/tmp" -xzf "/tmp/drupal-$VER.tar.gz"
+and mv "/tmp/drupal-$VER" "$INSTLOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to extract $PROG_NAME"
+  echo "Error: Failed to extract $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Configure
+mkdir -p "$INSTLOC/sites/default/files"
+and cp "$INSTLOC/sites/default/default.settings.php" "$INSTLOC/sites/default/settings.php"
+and chmod 777 "$INSTLOC/sites/default/files"
+and chmod 777 "$INSTLOC/sites/default/settings.php"
+and echo "
+\$databases = array (
+  'default' =>
+  array (
+    'default' =>
+    array (
+      'database' => '$DBNAME',
+      'username' => 'root',
+      'password' => '$password',
+      'host' => 'localhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
+);
+" >> "$INSTLOC/sites/default/settings.php"
+or begin
+  set -l err $status
+  echo "Error: Failed to configure $PROG_NAME"
+  echo "Error: The configuration stage failed" >&2
+  exit $err
+end
+
+
+
+# ## Cleanup
+sudo rm "/tmp/drupal-$VER.tar.gz"
+or begin
+  set -l err $status
+  echo "Warning: Failed to cleanup temp file"
+  echo "Warning: Failed to cleanup $PROG_NAEM tar.gz file in temp dir" >&2
+  # Don't exit for warnings
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been setup. To complete the installation, please visit
+the following address:
+
+    $USERNAME.koding.io/drupal/install.php
+"
+end
+main
+# vim: set filetype=fish:
+

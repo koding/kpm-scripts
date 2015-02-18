@@ -35,6 +35,11 @@
     "tags": ["storage"]
   },
   {
+    "name": "drupal",
+    "description": "A popular Content Management System",
+    "tags": ["cms", "content management", "php"]
+  },
+  {
     "name": "elasticsearch",
     "description": "A powerful search and analytics engine",
     "tags": ["search"]
