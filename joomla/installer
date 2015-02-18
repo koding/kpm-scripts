@@ -1,0 +1,178 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Joomla"
+set -l REQ_STORAGE  100
+set -l USERNAME     $USER
+set -l INSTLOC      ~/Web/joomla
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if test -e "$INSTLOC"
+  echo "
+A previous $PROG_NAME installation is detected. To access it,
+visit the following link:
+
+    $USERNAME.koding.io/joomla
+"
+  echo "Req Error: Already installed" >&2
+  exit 1
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 1
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 1
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  echo "Req Error: Apache not installed" >&2
+  exit 1
+end
+# ### MySQL
+if not which mysql > /dev/null
+  echo "
+$PROG_NAME requires that MySQL is already installed. Please install
+MySQL with the following command:
+
+    \$ kpm install mysql
+"
+  echo "Req Error: Mysql not installed" >&2
+  exit 1
+end
+
+
+
+# ## Start MySQL
+# We're restarting here, to not fail if mysql was
+# already running. Now, if it fails, mysql truly
+# failed to start.
+echo "Checking MySQL status"
+sudo service mysql restart > /dev/null
+or begin
+  set -l err $status
+  echo "Error: Failed to ensure a working MySQL server"
+  echo "Error: Failed to restart MySQL." >&2
+  exit $err
+end
+
+
+
+# ## Update
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nUpdating.."
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to update package list"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
+# ## Install dependencies
+sudo apt-get install -y php5-mysql
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME dependencies"
+  echo "Error: apt-get failed to install dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Reload Apache
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Error: Failed to reload Apache"
+  echo "Error: Failed to reload Apache" >&2
+  exit $err
+end
+
+
+
+# ## Download
+mkdir -p "$INSTLOC"
+and curl -L -o "$INSTLOC/joomla.zip" \
+  "https://github.com/joomla/joomla-cms/releases/download/3.3.6/Joomla_3.3.6-Stable-Full_Package.zip"
+or begin
+  set -l err $status
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: Downloading zip from joomla.org failed" >&2
+  exit $err
+end
+
+
+
+# ## Unzip
+cd "$INSTLOC"
+and unzip -q "joomla.zip"
+and chmod 777 -R "$INSTLOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to extract $PROG_NAME"
+  echo "Error: Failed to extract $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Cleanup temp file
+sudo rm "$INSTLOC/joomla.zip"
+or begin
+  set -l err $status
+  echo "Warning: Failed to cleanup temp file"
+  echo "Warning: Failed to cleanup zip file" >&2
+  # Don't exit for warnings
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME setup complete. To complete the installation visit the
+following url:
+
+    $USERNAME.koding.io/joomla
+"
+end
+main
+# vim: set filetype=fish:
+
