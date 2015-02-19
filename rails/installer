@@ -28,7 +28,7 @@ the following commands:
 
     \$ rails new myApp
     \$ cd myApp
-    \$ rails server -b 0.0.0.0
+    \$ rails server
 
 You can then visit your app on the following address:
 
@@ -119,6 +119,20 @@ end
 
 
 
+# ## Add wrapper
+sudo cp "/var/lib/gems/2.0.0/gems/railties-4.2.0/bin/rails" "/usr/local/bin/_rails"
+and sudo curl -L -o "/tmp/railswrapper" "https://raw.githubusercontent.com/koding/kpm-scripts/develop/rails/wrapper"
+and sudo mv "/tmp/railswrapper" "/usr/local/bin/rails"
+and sudo chmod +x "/usr/local/bin/rails"
+or begin
+  set -l err $status
+  echo "Error: Failed setting up rails wrapper"
+  echo "Error: Failed setting up rails wrapper" >&2
+  exit $err
+end
+
+
+
 # ## End
 echo "
 $PROG_NAME Installation complete! To create and start a rails app, run
@@ -126,7 +140,7 @@ the following commands:
 
     \$ rails new myApp
     \$ cd myApp
-    \$ rails server -b 0.0.0.0
+    \$ rails server
 
 You can then visit your app on the following address:
 
