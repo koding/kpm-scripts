@@ -12,12 +12,12 @@
   {
     "name": "couchdb",
     "description": "A NOSQL JSON oriented database",
-    "tags": ["database"]
+    "tags": ["database", "nosql"]
   },
   {
     "name": "cassandra",
     "description": "A decentralized 'big data' database",
-    "tags": ["database"]
+    "tags": ["database", "nosql"]
   },
   {
     "name": "cockpit",
@@ -92,7 +92,7 @@
   {
     "name": "memcached",
     "description": "A high-performance memory object caching system",
-    "tags": ["database"]
+    "tags": ["database", "nosql"]
   },
   {
     "name": "meteor",
@@ -102,12 +102,12 @@
   {
     "name": "mongodb",
     "description": "A popular NoSQL document database",
-    "tags": ["database"]
+    "tags": ["database", "nosql"]
   },
   {
     "name": "mysql",
     "description": "A popular relational database",
-    "tags": ["database"]
+    "tags": ["database", "sql"]
   },
   {
     "name": "nginx",
@@ -140,6 +140,11 @@
     "tags": ["python"]
   },
   {
+    "name": "postgresql",
+    "description": "A Ruby full-stack web framework",
+    "tags": ["sql", "database"]
+  },
+  {
     "name": "rails",
     "description": "A Ruby full-stack web framework",
     "tags": ["ruby"]
@@ -147,7 +152,7 @@
   {
     "name": "redis",
     "description": "An advanced key-value cache and store",
-    "tags": ["database"]
+    "tags": ["database", "nosql"]
   },
   {
     "name": "tomcat",
