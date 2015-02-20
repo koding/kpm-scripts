@@ -141,7 +141,7 @@
   },
   {
     "name": "postgresql",
-    "description": "A Ruby full-stack web framework",
+    "description": "An advanced SQL database",
     "tags": ["sql", "database"]
   },
   {
