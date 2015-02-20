@@ -127,12 +127,12 @@
   {
     "name": "phpmyadmin",
     "description": "A MySQL database management tool",
-    "tags": ["php", "mysql", "database"]
+    "tags": ["php", "mysql"]
   },
   {
     "name": "phppgadmin",
     "description": "A PostgreSQL database management tool",
-    "tags": ["php", "postgresql", "database"]
+    "tags": ["php", "postgresql"]
   },
   {
     "name": "pip",
