@@ -130,6 +130,11 @@
     "tags": ["java"]
   },
   {
+    "name": "pgcli",
+    "description": "A REPL for PostgreSQL",
+    "tags": ["repl", "postgresql", "sql"]
+  },
+  {
     "name": "phpmyadmin",
     "description": "A MySQL database management tool",
     "tags": ["php", "mysql"]
