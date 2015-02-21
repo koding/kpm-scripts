@@ -30,6 +30,11 @@
     "tags": ["python"]
   },
   {
+    "name": "docker",
+    "description": "A platfor for managing Linux Containers",
+    "tags": ["container", "docker"]
+  },
+  {
     "name": "dropbox",
     "description": "The official Dropbox command line client",
     "tags": ["storage"]
