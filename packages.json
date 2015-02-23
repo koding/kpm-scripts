@@ -80,6 +80,11 @@
     "tags": ["php"]
   },
   {
+    "name": "linux-dash",
+    "description": "A low-overhead system monitoring web dashboard",
+    "tags": ["system monitor"]
+  },
+  {
     "name": "mediawiki",
     "description": "A wiki, originally for use on Wikipedia",
     "tags": ["wiki", "php"]
