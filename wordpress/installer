@@ -4,7 +4,7 @@ function main
 set -l PROG_NAME    "Wordpress"
 set -l REQ_STORAGE  20704
 set -l USERNAME     $USER
-set -l DBNAME       "wordpress_db"
+set -l DBNAME       "kpm_wordpress_db"
 set -l DBUSER       "root"
 set -l INSTALL_LOC  ~/Web/wordpress
 
@@ -34,7 +34,9 @@ end
 if not which mysql > /dev/null
   echo "
 $PROG_NAME requires that MySQL is already installed. Please install
-MySQL first.
+MySQL with the following command:
+
+    \$ kpm install mysql
 "
   echo "Req Error: Mysql not installed" >&2
   exit 1
@@ -118,7 +120,9 @@ stty echo < /dev/tty
 
 
 # ## Test mysql password
-mysql -uroot -p$password -e ""
+# Note that we're piping the STDERR to devnull, since that is where
+# mysql will show errors to the user.
+mysql -uroot -p$password -e "" 2> /dev/null
 or begin
   set -l err $status
   echo "Error: Invalid mysql root user authorization"
@@ -129,7 +133,7 @@ end
 
 
 # ## Setup the database
-mysql -uroot -p$password -e "CREATE DATABASE wordpress_db;"
+mysql -uroot -p$password -e "CREATE DATABASE $DBNAME;"
 or begin
   set -l err $status
   echo "Error: Failed to setup database."
