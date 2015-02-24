@@ -39,10 +39,12 @@ You can then visit your app on the following address:
   exit 1
 end
 # ### Check if ruby is installed
-if not which ruby > /dev/null
+if not which ruby2.0 > /dev/null
   echo "
-$PROG_NAME requires that Ruby is already installed. Please install it
-first.
+The kpm version of $PROG_NAME requires that Ruby2 is already installed.
+Please install it with the following command:
+
+    \$ kpm install ruby2
 "
   echo "Req Error: Missing ruby" >&2
   exit 1
@@ -85,23 +87,11 @@ end
 
 # ## Install dependencies
 sudo apt-get install -y build-essential libsqlite3-dev \
-  ruby2.0 ruby2.0-dev libssl-dev zlib1g-dev
+  libssl-dev zlib1g-dev
 or begin
   set -l err $status
   echo "Error: Failure installing dependencies"
   echo "Error: apt-get install failed" >&2
-  exit $err
-end
-
-
-
-# ## Make 2.0 the default
-sudo ln -sf /usr/bin/ruby2.0 /usr/bin/ruby
-and sudo ln -sf /usr/bin/gem2.0 /usr/bin/gem
-or begin
-  set -l err $status
-  echo "Error: Failed to set ruby2.0 to default"
-  echo "Error: Failed to set ruby2.0 and gem2.0 to default" >&2
   exit $err
 end
 
