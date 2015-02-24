@@ -4,7 +4,7 @@ function main
 set -l PROG_NAME    "Wordpress"
 set -l REQ_STORAGE  20704
 set -l USERNAME     $USER
-set -l DBNAME       "wordpress_db"
+set -l DBNAME       "kpm_wordpress_db"
 set -l DBUSER       "root"
 set -l INSTALL_LOC  ~/Web/wordpress
 
@@ -133,7 +133,7 @@ end
 
 
 # ## Setup the database
-mysql -uroot -p$password -e "CREATE DATABASE wordpress_db;"
+mysql -uroot -p$password -e "CREATE DATABASE $DBNAME;"
 or begin
   set -l err $status
   echo "Error: Failed to setup database."
