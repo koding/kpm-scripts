@@ -56,23 +56,23 @@ echo ""
 
 
 
-# ## Uninstall Dependencies
-sudo apt-get purge --auto-remove -y php5-gd php5-mysql php5-mcrypt
-or begin
-  set -l err $status
-  echo "Error: Failed to remove $PROG_NAME dependencies"
-  echo "Error: apt-get failed to uninstall dependencies" >&2
-  exit $err
-end
-
-
-
 # ## Disable mcrypt
 sudo php5dismod mcrypt
 or begin
   set -l err $status
   echo "Error: Failed to disable mcrypt mod"
   echo "Error: Failed to disable mcrypt mod" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y php5-gd php5-mysql php5-mcrypt
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
   exit $err
 end
 
