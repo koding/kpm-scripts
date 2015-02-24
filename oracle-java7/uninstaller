@@ -15,7 +15,7 @@ or begin
 A kpm installation of $PROG_NAME cannot be found.
 "
   echo "Req Error: Installation not found" >&2
-  exit 1
+  exit 84
 end
 
 

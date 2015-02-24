@@ -25,7 +25,7 @@ You can also upgrade your account to get more space, at the following url
     https://koding.com/Pricing
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 # ### Check if already installed
@@ -37,7 +37,7 @@ command:
     \$ mean myApp
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 
 # ### Check if node is installed
@@ -47,7 +47,7 @@ $PROG_NAME requires that NodeJS is already installed. Please
 install it first.
 "
   echo "Req Error: Missing npm" >&2
-  exit 1
+  exit 84
 end
 
 # ## Check if npm installed
@@ -57,7 +57,7 @@ $PROG_NAME requires that npm is already installed. Please install
 npm first.
 "
   echo "Req Error: Missing npm" >&2
-  exit 1
+  exit 84
 end
 
 # ## Check if mongodb installed
@@ -67,7 +67,7 @@ $PROG_NAME requires that mongodb is already installed. Please install
 mongo first.
 "
   echo "Req Error: Missing mongodb" >&2
-  exit 1
+  exit 84
 end
 
 
@@ -78,7 +78,7 @@ $PROG_NAME requires that grunt is already installed. Please install
 grunt first.
 "
   echo "Req Error: Missing grunt" >&2
-  exit 1
+  exit 84
 end
 
 

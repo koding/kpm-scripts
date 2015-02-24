@@ -28,7 +28,7 @@ Please refer to the following guide for tips on how to free up VM storage:
     http://learn.koding.com/guides/freeing-up-space
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 # ### Check if already installed
 if which mongod > /dev/null
@@ -39,7 +39,7 @@ command:
     \$ sudo service mongodb start
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 
 

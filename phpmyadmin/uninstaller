@@ -14,7 +14,7 @@ set -l USERNAME     $USER
 if not test -e /etc/phpmyadmin
   echo "Error: A $PROG_NAME installation cannot be found."
   echo "Req Error: Cannot find install" >&2
-  exit 1
+  exit 84
 end
 
 

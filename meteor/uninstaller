@@ -16,7 +16,7 @@ kpm installs $PROG_NAME into your home directory. Please switch to your
 normal Koding user (not root), and try this command again.
 "
   echo "Req Error: Logged in as root" >&2
-  exit 1
+  exit 84
 end
 # ### Check if installed
 if not test -e "/home/$USERNAME/.meteor"
@@ -24,7 +24,7 @@ if not test -e "/home/$USERNAME/.meteor"
 A $PROG_NAME installation cannot be found.
 "
   echo "Req Error: Cannot find install" >&2
-  exit 1
+  exit 84
 end
 
 

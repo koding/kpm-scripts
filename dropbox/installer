@@ -15,7 +15,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: User root"
-  exit 1
+  exit 84
 end
 # ### Already installed?
 if test -e ~/.dropbox-dist
@@ -31,7 +31,7 @@ added functionality (such as excluding files), with the following command.
     \$ dropbox
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 
 

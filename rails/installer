@@ -18,7 +18,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Logged in as root" >&2
-  exit 1
+  exit 84
 end
 # ### Check if already installed
 if which rails > /dev/null
@@ -36,7 +36,7 @@ You can then visit your app on the following address:
 
 "
   echo "Req Error: Rails already installed" >&2
-  exit 1
+  exit 84
 end
 # ### Check if ruby is installed
 if not which ruby2.0 > /dev/null
@@ -47,7 +47,7 @@ Please install it with the following command:
     \$ kpm install ruby2
 "
   echo "Req Error: Missing ruby" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
@@ -69,7 +69,7 @@ Please refer to the following guide for tips on how to free up VM storage:
     http://learn.koding.com/guides/freeing-up-space
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 

@@ -14,7 +14,7 @@ command:
    sudo service mysql start
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
@@ -36,7 +36,7 @@ Please refer to the following guide for tips on how to free up VM storage:
     http://learn.koding.com/guides/freeing-up-space
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 

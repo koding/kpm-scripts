@@ -16,7 +16,7 @@ if not which rails > /dev/null
 A $PROG_NAME installation cannot be found.
 "
   echo "Req Error: Cannot find install" >&2
-  exit 1
+  exit 84
 end
 
 

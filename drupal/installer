@@ -20,7 +20,7 @@ visit the following link:
     $USERNAME.koding.io/drupal
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 # ### User not root
 if test "$USERNAME" = "root"
@@ -29,7 +29,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Not logged in as user" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
@@ -53,7 +53,7 @@ Please refer to the following guide for tips on how to free up VM storage:
     http://learn.koding.com/guides/freeing-up-space
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 # ### Apache
 if not test -e /usr/sbin/apache2
@@ -62,7 +62,7 @@ $PROG_NAME requires that Apache is already installed. Please install
 Apache first.
 "
   echo "Req Error: Apache not installed" >&2
-  exit 1
+  exit 84
 end
 # ### MySQL
 if not which mysql > /dev/null
@@ -73,7 +73,7 @@ MySQL with the following command:
     \$ kpm install mysql
 "
   echo "Req Error: Mysql not installed" >&2
-  exit 1
+  exit 84
 end
 
 

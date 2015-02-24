@@ -17,7 +17,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Logged in as root" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
@@ -41,7 +41,7 @@ Please refer to the following guide for tips on how to free up VM storage:
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 # ### Check if node is installed
 if not which node > /dev/null
@@ -50,7 +50,7 @@ $PROG_NAME requires that NodeJS is already installed. Please
 install it first.
 "
   echo "Req Error: Missing nodejs" >&2
-  exit 1
+  exit 84
 end
 # ### Check if npm are installed
 if not which npm > /dev/null
@@ -59,7 +59,7 @@ $PROG_NAME requires that NPM is already installed. Please
 install it first.
 "
   echo "Req Error: Missing npm" >&2
-  exit 1
+  exit 84
 end
 # ### Check if already installed
 if which ungit > /dev/null
@@ -74,7 +74,7 @@ You can access your $PROG_NAME installation at the following address:
     $USERNAME.koding.io:8448
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 
 

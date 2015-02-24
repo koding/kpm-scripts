@@ -23,7 +23,7 @@ Or see the docs at:
     http://docs.meteor.com
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 # ### User not root
 # Ensure that the user is not `root`, because the default Apache
@@ -35,7 +35,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Logged in as root" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
@@ -57,7 +57,7 @@ Please refer to the following guide for tips on how to free up VM storage:
     http://learn.koding.com/guides/freeing-up-space
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 
