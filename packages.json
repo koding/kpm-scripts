@@ -135,6 +135,11 @@
     "tags": ["java"]
   },
   {
+    "name": "prestashop",
+    "description": "An e-commerce solution",
+    "tags": ["ecommerce"]
+  },
+  {
     "name": "pgcli",
     "description": "A REPL for PostgreSQL",
     "tags": ["repl", "postgresql", "sql"]
