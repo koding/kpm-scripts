@@ -58,7 +58,7 @@ end
 
 
 # ## Download
-sudo curl -L -o "/tmp/linux-dash-$VER.zip" \
+curl -L -o "/tmp/linux-dash-$VER.zip" \
   "https://github.com/afaqurk/linux-dash/archive/$VER.zip"
 or begin
   set -l err $status
