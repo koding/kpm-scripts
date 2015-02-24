@@ -59,6 +59,19 @@ end
 # ## Remove database
 # If mysql is installed, remove database. If it's not, ignore db
 if which mysql > /dev/null
+  # ### Start MySQL
+  # We're restarting here, to not fail if mysql was
+  # already running. Now, if it fails, mysql truly
+  # failed to start.
+  echo "Checking MySQL status"
+  sudo service mysql restart > /dev/null
+  or begin
+    set -l err $status
+    echo "Error: Failed to restart MySQL."
+    echo "Error: Failed to restart MySQL." >&2
+    exit $err
+  end
+
   # ### Get MySQL User Password
   stty -echo < /dev/tty
   for x in (seq 3)
@@ -79,14 +92,26 @@ Enter your MySQL root user password: "
     end
   end
   stty echo < /dev/tty
+  echo ""
 
-  # We're not testing the login here, since we're not requiring
-  # that this section passes. This design may change in the future.
+  # ### Test mysql password
+  # Note that we're piping the STDERR to devnull, since that is where
+  # mysql will show errors to the user.
+  mysql -uroot -p$password -e "" 2> /dev/null
+  or begin
+    set -l err $status
+    echo "Error: Invalid mysql root user authorization"
+    echo "Error: Mysql password test failed. Invalid pass" >&2
+    exit $err
+  end
+
+  # ### Drop database
   mysql -uroot -p"$password" -e "DROP DATABASE $DBNAME;"
   or begin
     set -l err $status
-    echo "Warning: Removing database failed"
-    echo "Warning: Drop database failed with exit $err" >&2
+    echo "Error: Removing database failed"
+    echo "Error: Drop database failed with exit $err" >&2
+    exit $err
   end
 end
 
