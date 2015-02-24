@@ -103,6 +103,17 @@ end
 
 
 
+# ## Reload Apache
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Error: Failed to reload Apache"
+  echo "Error: Failed to reload Apache" >&2
+  exit $err
+end
+
+
+
 # ## Remove dir
 rm -rf "$INSTLOC"
 
