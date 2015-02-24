@@ -83,7 +83,7 @@ end
 
 
 # ## Download
-sudo curl -L -o "/tmp/$DEBIAN" \
+curl -L -o "/tmp/$DEBIAN" \
   "http://pkg.jenkins-ci.org/debian/binary/$DEBIAN"
 or begin
   set -l err $status
