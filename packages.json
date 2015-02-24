@@ -170,6 +170,11 @@
     "tags": ["database", "nosql"]
   },
   {
+    "name": "ruby2",
+    "description": "The Ruby programming language, version 2.X",
+    "tags": ["ruby"]
+  },
+  {
     "name": "tomcat",
     "description": "A Java web server and servlet container",
     "tags": ["java"]
