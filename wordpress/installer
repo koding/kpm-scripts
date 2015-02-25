@@ -42,6 +42,8 @@ MySQL with the following command:
   exit 84
 end
 # ### Check mysql version
+# Note, we're using Grep here instead of Sed because Grep will
+# fail if the pattern can't be found, which is good.
 set -l mysqlMajorVer (mysql --version | grep -Pio "(?<=Distrib )(\d)(?=\.\d\.\d+)")
 and test "$mysqlMajorVer" -ge "5"
 or begin
@@ -53,7 +55,7 @@ Please install MySQL with the following command:
 "
   echo "Req Error: Mysql version less than 5.4. \
 Current ver:"(mysql --version) >&2
-  exit 1
+  exit 84
 end
 # ### Check php minor version
 # In theory we don't need to check for the existence oh php, since
@@ -70,7 +72,7 @@ Please install PHP 5.4+ first.
 "
   echo "Req Error: Php version less than 5.4. \
 Current ver:'"(php -v | awk "NR==1")"'" >&2
-  exit 1
+  exit 84
 end
 # ### User not root
 # Ensure that the user is not `root`, because the default Apache
