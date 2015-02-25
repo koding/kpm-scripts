@@ -1,14 +1,14 @@
 #!/usr/bin/env fish
 function main
 # ## Config
-set -l PROG_NAME    "vsFTPd"
+set -l PROG_NAME    "Ruby 2"
 set -l USERNAME     $USER
 
 
 
 # ## Check Requirements
 # ### Check if installed
-if not which vsftpd > /dev/null
+if which ruby2 > /dev/null
   echo "
 A kpm installation of $PROG_NAME cannot be found.
 "
@@ -18,12 +18,24 @@ end
 
 
 
-# ## Uninstall
-sudo apt-get purge --auto-remove -y vsftpd
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y ruby2.0 ruby2.0-dev
 or begin
   set -l err $status
   echo "Error: Failed to remove $PROG_NAME dependencies"
   echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Restore ruby ver
+sudo ln -sf /usr/bin/ruby1.9.1 /usr/bin/ruby
+and sudo ln -sf /usr/bin/gem1.9.1 /usr/bin/gem
+or begin
+  set -l err $status
+  echo "Error: Failed to restore ruby default"
+  echo "Error: Failed to make ruby1.9.1 the default" >&2
   exit $err
 end
 

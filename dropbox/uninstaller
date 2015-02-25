@@ -14,7 +14,7 @@ You must be logged in as a non-root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: User root"
-  exit 1
+  exit 84
 end
 # ### Installed?
 if not test -e ~/.dropbox-dist
@@ -22,7 +22,7 @@ if not test -e ~/.dropbox-dist
 A $PROG_NAME installation cannot be found.
 "
   echo "Req Error: Cannot find uninstaller" >&2
-  exit 1
+  exit 84
 end
 
 

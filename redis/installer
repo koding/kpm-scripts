@@ -46,7 +46,7 @@ Please refer to the following guide for tips on how to free up VM storage:
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 

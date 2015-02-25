@@ -1,26 +1,24 @@
 #!/usr/bin/env fish
 function main
 # ## Config
-set -l PROG_NAME    "Tomcat7"
-set -l REQ_STORAGE  34032
+set -l PROG_NAME    "Ruby 2"
+set -l REQ_STORAGE  100
 set -l USERNAME     $USER
 
 
 
 # ## Check Requirements
 # ### Already installed?
-# Not sure this is the best way to test for valid installation of Tomcat.
-# A process would likely be better.
-if test -e /var/lib/tomcat7
+if which ruby2 > /dev/null
   echo "
-$PROG_NAME is already installed. You can access the default $PROG_NAME
-server at the following address:
+A previous $PROG_NAME installation is detected. You can run the
+interpreter with the following command:
 
-    $USERNAME.koding.io:8080
+    \$ ruby
 
-If you need to start it, run the following command:
+And install Ruby Gem packages with:
 
-  \$ sudo service tomcat7 start
+    \$ gem
 "
   echo "Req Error: Already installed" >&2
   exit 84
@@ -61,13 +59,39 @@ end
 
 
 
+# ## Update
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nUpdating.."
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to update package list"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
 # ## Install
-sudo apt-get install -y tomcat7 \
-  tomcat7-docs tomcat7-admin tomcat7-examples
+sudo apt-get install -y ruby2.0 ruby2.0-dev
 or begin
   set -l err $status
   echo "Error: Failure installing $PROG_NAME"
-  echo "Error: apt-get failed to install $PROG_NAME" >&2
+  echo "Error: apt-get failed to install" >&2
+  exit $err
+end
+
+
+
+# ## Make 2.0 the default
+sudo ln -sf /usr/bin/ruby2.0 /usr/bin/ruby
+and sudo ln -sf /usr/bin/gem2.0 /usr/bin/gem
+or begin
+  set -l err $status
+  echo "Error: Failed to set ruby2.0 to default"
+  echo "Error: Failed to set ruby2.0 and gem2.0 to default" >&2
   exit $err
 end
 
@@ -75,10 +99,14 @@ end
 
 # ## Success
 echo "
-$PROG_NAME installation complete. You can access the default $PROG_NAME
-server at the following address:
+$PROG_NAME installation complete. You can run the interpreter with
+the following command:
 
-    $USERNAME.koding.io:8080
+    \$ ruby
+
+And install Ruby Gem packages with:
+
+    \$ gem
 "
 end
 main

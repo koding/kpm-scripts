@@ -45,7 +45,7 @@ visit the following link:
     $USERNAME.koding.io/phpmyadmin
 "
   echo "Req Error: Already installed"
-  exit 1
+  exit 84
 end
 # ### Apache
 if not test -e /usr/sbin/apache2
@@ -54,7 +54,7 @@ $PROG_NAME requires that Apache is already installed. Please install
 Apache first.
 "
   echo "Req Error: Apache not installed" >&2
-  exit 1
+  exit 84
 end
 # ### MySQL
 if not which mysql > /dev/null
@@ -63,7 +63,7 @@ $PROG_NAME requires that MySQL is already installed. Please install
 MySQL first.
 "
   echo "Req Error: Mysql not installed" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage
@@ -91,7 +91,7 @@ Please refer to the following guide for tips on how to free up VM storage:
   # Add this message to the above echo, once the guide exists
   #Please refer to the following guide to learn how to list and remove unused packages.
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 

@@ -28,7 +28,7 @@ For more detailed instructions, follow the Official Tutorial at:
 
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 # ### Pip installed?
 if not which pip > /dev/null
@@ -40,7 +40,7 @@ with the following command:
 
 "
   echo "Req Error: pip not found" >&2
-  exit 1
+  exit 84
 end
 
 

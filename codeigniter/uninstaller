@@ -16,7 +16,7 @@ if not test -e "$INSTALL_LOC"
   echo "Error: A $PROG_NAME installation in the default kpm install
 location cannot be found."
   echo "Req Error: Cannot find install" >&2
-  exit 1
+  exit 84
 end
 
 

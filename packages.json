@@ -80,6 +80,11 @@
     "tags": ["php"]
   },
   {
+    "name": "linux-dash",
+    "description": "A low-overhead system monitoring web dashboard",
+    "tags": ["system monitor"]
+  },
+  {
     "name": "mediawiki",
     "description": "A wiki, originally for use on Wikipedia",
     "tags": ["wiki", "php"]
@@ -130,6 +135,11 @@
     "tags": ["java"]
   },
   {
+    "name": "prestashop",
+    "description": "An e-commerce solution",
+    "tags": ["ecommerce"]
+  },
+  {
     "name": "pgcli",
     "description": "A REPL for PostgreSQL",
     "tags": ["repl", "postgresql", "sql"]
@@ -163,6 +173,11 @@
     "name": "redis",
     "description": "An advanced key-value cache and store",
     "tags": ["database", "nosql"]
+  },
+  {
+    "name": "ruby2",
+    "description": "The Ruby programming language, version 2.X",
+    "tags": ["ruby"]
   },
   {
     "name": "tomcat",

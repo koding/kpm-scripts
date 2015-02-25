@@ -16,7 +16,7 @@ following command:
     \$ composer
 "
   echo "Req Error: Already installed" >&2
-  exit 1
+  exit 84
 end
 # ### php installed?
 if not which php > /dev/null
@@ -25,7 +25,7 @@ $PROG_NAME requires that php is already installed. Please install php
 first.
 "
   echo "Req Error: php not installed" >&2
-  exit 1
+  exit 84
 end
 
 

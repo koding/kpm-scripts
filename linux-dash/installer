@@ -1,26 +1,22 @@
 #!/usr/bin/env fish
 function main
 # ## Config
-set -l PROG_NAME    "Tomcat7"
-set -l REQ_STORAGE  34032
+set -l PROG_NAME    "Linux Dash"
+set -l REQ_STORAGE  100
 set -l USERNAME     $USER
+set -l INSTLOC      ~/Web/linux-dash
+set -l VER          "1.5"
 
 
 
 # ## Check Requirements
 # ### Already installed?
-# Not sure this is the best way to test for valid installation of Tomcat.
-# A process would likely be better.
-if test -e /var/lib/tomcat7
+if test -e "$INSTLOC"
   echo "
-$PROG_NAME is already installed. You can access the default $PROG_NAME
-server at the following address:
+A previous $PROG_NAME installation is detected. To access it,
+visit the following link:
 
-    $USERNAME.koding.io:8080
-
-If you need to start it, run the following command:
-
-  \$ sudo service tomcat7 start
+    $USERNAME.koding.io/linux-dash
 "
   echo "Req Error: Already installed" >&2
   exit 84
@@ -61,24 +57,47 @@ end
 
 
 
-# ## Install
-sudo apt-get install -y tomcat7 \
-  tomcat7-docs tomcat7-admin tomcat7-examples
+# ## Download
+curl -L -o "/tmp/linux-dash-$VER.zip" \
+  "https://github.com/afaqurk/linux-dash/archive/$VER.zip"
 or begin
   set -l err $status
-  echo "Error: Failure installing $PROG_NAME"
-  echo "Error: apt-get failed to install $PROG_NAME" >&2
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: Downloading binary from jenkins-ci.org failed" >&2
   exit $err
+end
+
+
+
+# ## Extract and "Install"
+cd /tmp
+and unzip "linux-dash-$VER.zip"
+and mv "linux-dash-1.5" "$INSTLOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to install $PROG_NAME"
+  echo "Error: unzipping or moving $PROG_NAME failed" >&2
+  exit $err
+end
+
+
+
+# ## Cleanup temp file
+sudo rm "/tmp/linux-dash-$VER.zip"
+or begin
+  set -l err $status
+  echo "Warning: Failed to cleanup temp file"
+  echo "Warning: Failed to cleanup zip file in temp dir" >&2
+  # Don't exit for warnings
 end
 
 
 
 # ## Success
 echo "
-$PROG_NAME installation complete. You can access the default $PROG_NAME
-server at the following address:
+$PROG_NAME installation complete. To access it, visit the following url:
 
-    $USERNAME.koding.io:8080
+    $USERNAME.koding.io/linux-dash
 "
 end
 main

@@ -1,11 +1,11 @@
 #!/usr/bin/env fish
 function main
 # ## Config
-set -l PROG_NAME    "Cockpit"
+set -l PROG_NAME    "Prestashop"
 set -l REQ_STORAGE  100
 set -l USERNAME     $USER
-set -l VER          "0.13.0"
-set -l INSTLOC      ~/Web/cockpit
+set -l INSTLOC      ~/Web/prestashop
+set -l VER          "1.6.0.13"
 
 
 
@@ -16,11 +16,7 @@ if test -e "$INSTLOC"
 A previous $PROG_NAME installation is detected. To access it,
 visit the following link:
 
-    $USERNAME.koding.io/cockpit
-
-If you still need to install $PROG_NAME, visit the following URL:
-
-    $USERNAME.koding.io/cockpit/install
+    $USERNAME.koding.io/prestashop
 "
   echo "Req Error: Already installed" >&2
   exit 84
@@ -32,6 +28,26 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Not logged in as user" >&2
+  exit 84
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  echo "Req Error: Apache not installed" >&2
+  exit 84
+end
+# ### MySQL
+if not which mysql > /dev/null
+  echo "
+$PROG_NAME requires that MySQL is already installed. Please install
+MySQL with the following command:
+
+    \$ kpm install mysql
+"
+  echo "Req Error: Mysql not installed" >&2
   exit 84
 end
 # ### Storage
@@ -77,7 +93,7 @@ end
 
 
 # ## Install dependencies
-sudo apt-get install -y php5-sqlite
+sudo apt-get install -y php5-gd php5-mysql php5-mcrypt
 or begin
   set -l err $status
   echo "Error: Failure installing $PROG_NAME dependencies"
@@ -87,58 +103,61 @@ end
 
 
 
-# ## Reload apache
+# ## Enable mcrypt
+sudo php5enmod mcrypt
+or begin
+  set -l err $status
+  echo "Error: Failed to enable mcrypt mod"
+  echo "Error: Failed to enable mcrypt mod" >&2
+  exit $err
+end
+
+
+
+# ## Reload Apache
 sudo service apache2 reload
 or begin
   set -l err $status
-  echo "Error: Failure reloading Apache"
-  echo "Error: Failure reloading Apache" >&2
+  echo "Error: Failed to reload Apache"
+  echo "Error: Failed to reload Apache" >&2
   exit $err
 end
 
 
 
 # ## Download
-curl -Lo "/tmp/cockpit-$VER.tar.gz" \
-  "https://github.com/aheinze/cockpit/archive/$VER.tar.gz"
+curl -L -o "/tmp/prestashop_$VER.zip" \
+  "http://www.prestashop.com/download/prestashop_$VER.zip"
 or begin
   set -l err $status
   echo "Error: Failed to download $PROG_NAME"
-  echo "Error: Downloading tar from $PROG_NAME repo failed" >&2
+  echo "Error: Downloading binary from jenkins-ci.org failed" >&2
   exit $err
 end
 
 
 
-# ## Untar & move
-tar -C "/tmp" -zxf "/tmp/cockpit-$VER.tar.gz"
-and mv "/tmp/cockpit-$VER" "$INSTLOC"
+# ## Extract and "Install"
+cd /tmp
+and unzip "prestashop_$VER.zip"
+and mv "prestashop" "$INSTLOC"
+and chmod -R 777 "$INSTLOC"
 or begin
   set -l err $status
-  echo "Error: Failed to extract and move $PROG_NAME"
-  echo "Error: Failed to extract and move $PROG_NAME" >&2
+  echo "Error: Failed to install $PROG_NAME"
+  echo "Error: unzipping or moving $PROG_NAME failed" >&2
   exit $err
 end
 
 
 
-# ## Set permissions
-chmod 777 -R "$INSTLOC/storage"
-or begin
-  set -l err $status
-  echo "Error: Failed to set $PROG_NAME permissions"
-  echo "Error: Failed to set $PROG_NAME permissions" >&2
-  exit $err
-end
-
-
-
- ## Cleanup
-sudo rm "/tmp/cockpit-$VER.tar.gz"
+# ## Cleanup temp file
+sudo rm "/tmp/prestashop_$VER.zip"
+and sudo rm "/tmp/Install_PrestaShop.html"
 or begin
   set -l err $status
   echo "Warning: Failed to cleanup temp file"
-  echo "Warning: Failed to cleanup tar file in temp dir" >&2
+  echo "Warning: Failed to cleanup zip file in temp dir" >&2
   # Don't exit for warnings
 end
 
@@ -146,10 +165,10 @@ end
 
 # ## Success
 echo "
-$PROG_NAME has been partially installed. Next, simply visit the following
-URL to complete the installation.
+$PROG_NAME has been setup. To complete the installation, please visit
+the following address:
 
-    $USERNAME.koding.io/cockpit/install
+    $USERNAME.koding.io/prestashop
 "
 end
 main

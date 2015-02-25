@@ -31,7 +31,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Logged in as root" >&2
-  exit 1
+  exit 84
 end
 # ### Apache
 if not test -e /usr/sbin/apache2

@@ -30,7 +30,7 @@ $PROG_NAME should not be installed from the root user. Please switch
 to your normal Koding user, and try this command again.
 "
   echo "Req Error: Not logged in as user" >&2
-  exit 1
+  exit 84
 end
 # ### Composer installed?
 if not which composer > /dev/null
@@ -41,7 +41,7 @@ Please install it with the following command:
     \$ kpm install composer
 "
   echo "Req Error: composer not installed" >&2
-  exit 1
+  exit 84
 end
 # ### Storage
 set -l available_storage (df / | awk 'NR>1{print $4}')
@@ -65,7 +65,7 @@ Please refer to the following guide for tips on how to free up VM storage:
     http://learn.koding.com/guides/freeing-up-space
 "
   echo "Req Error: Not enough storage" >&2
-  exit 1
+  exit 84
 end
 
 
