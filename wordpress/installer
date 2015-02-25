@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 function main
 # ## Config
-set -l PROG_NAME    "Wordpress"
+set -l PROG_NAME    "WordPress"
 set -l REQ_STORAGE  20704
 set -l USERNAME     $USER
 set -l DBNAME       "kpm_wordpress_db"

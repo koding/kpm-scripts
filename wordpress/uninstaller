@@ -4,7 +4,7 @@ function main
 
 
 # ## Config
-set -l PROG_NAME    "Wordpress"
+set -l PROG_NAME    "WordPress"
 set -l USERNAME     $USER
 set -l DBNAME       "kpm_wordpress_db"
 set -l INSTALL_LOC  ~/Web/wordpress
