@@ -82,7 +82,7 @@
   {
     "name": "linux-dash",
     "description": "A low-overhead system monitoring web dashboard",
-    "tags": ["system monitor"]
+    "tags": ["system", "administration", "admin", "monitor"]
   },
   {
     "name": "mediawiki",
@@ -198,6 +198,11 @@
     "name": "vsftpd",
     "description": "An FTP server powered by vsFTPd",
     "tags": ["file transfer", "ftp"]
+  },
+  {
+    "name": "webmin",
+    "description": "A web-based interface for system administration",
+    "tags": ["system", "administration", "admin", "php"]
   },
   {
     "name": "wordpress",

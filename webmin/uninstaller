@@ -1,0 +1,53 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Webmin"
+set -l USERNAME     $USER
+set -l DEBIAN       "webmin_1.730_all.deb"
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e /usr/share/webmin
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y webmin \
+  libnet-ssleay-perl libauthen-pam-perl libio-pty-perl apt-show-versions
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME"
+  echo "Error: Failed to remove $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Remove dir
+# Apparently webmin doesn't remove its dir entirely,
+# so finish the removal.
+sudo rm -rf /usr/share/webmin
+or begin
+  set -l err $status
+  echo "Error: Failed to manually remove $PROG_NAME installation directory"
+  echo "Error: sudo rm -rf /usr/share/webmin failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
