@@ -130,6 +130,11 @@
     "tags": ["vnc"]
   },
   {
+    "name": "octopress",
+    "description": "A Jekyll blogging platform",
+    "tags": ["jekyll"]
+  },
+  {
     "name": "oracle-java7",
     "description": "Oracle's Java Development Kit 7",
     "tags": ["java"]

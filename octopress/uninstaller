@@ -1,0 +1,62 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Octopress"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e ~/octopress
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall Bundle
+sudo gem uninstall bundle
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependency"
+  echo "Error: Failed to remove bundle" >&2
+  exit $err
+end
+
+
+
+## ## Uninstall Dependencies
+## Not removing make for now.. many things depend on it
+#sudo apt-get purge --auto-remove -y make
+#or begin
+#  set -l err $status
+#  echo "Error: Failed to remove $PROG_NAME dependencies"
+#  echo "Error: apt-get failed to uninstall dependencies" >&2
+#  exit $err
+#end
+
+
+
+# ## Remove
+rm -rf ~/Web/octopress
+and rm -rf ~/octopress
+or begin
+  set -l err $status
+  echo "Failed to remove $PROG_NAME"
+  echo "rm -rf ~/octopress failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
