@@ -50,6 +50,11 @@
     "tags": ["search"]
   },
   {
+    "name": "elixir",
+    "description": "A dynamic, functional language",
+    "tags": ["erlang", "elixir"]
+  },
+  {
     "name": "erlang",
     "description": "A general-purpose concurrent, garbage-collected language",
     "tags": ["erlang"]
