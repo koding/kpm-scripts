@@ -50,6 +50,11 @@
     "tags": ["search"]
   },
   {
+    "name": "erlang",
+    "description": "A general-purpose concurrent, garbage-collected language",
+    "tags": ["erlang"]
+  },
+  {
     "name": "ftp",
     "description": "An FTP server powered by ProFTPd",
     "tags": ["file transfer", "ftp"]
