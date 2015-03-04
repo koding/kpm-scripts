@@ -190,6 +190,11 @@
     "tags": ["database", "nosql"]
   },
   {
+    "name": "rockmongo",
+    "description": "A web based MongoDB administration tool",
+    "tags": ["mongodb", "administration"]
+  },
+  {
     "name": "ruby2",
     "description": "The Ruby programming language, version 2.X",
     "tags": ["ruby"]
