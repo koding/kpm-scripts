@@ -180,6 +180,11 @@
     "tags": ["sql", "database"]
   },
   {
+    "name": "pyrocms",
+    "description": "An MVC CMS built to be easy to use, theme and develop with",
+    "tags": ["php", "content management system", "cms"]
+  },
+  {
     "name": "rails",
     "description": "A Ruby full-stack web framework",
     "tags": ["ruby"]
