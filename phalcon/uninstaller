@@ -30,7 +30,7 @@ function main
     sudo rm /etc/php5/mods-available/phalcon.ini
     or begin
       set -l err $status
-      echo "Error: Failure to remove $MOD_DIR/phalcon.so"
+      echo "Error: Failure to remove /etc/php5/mods-available/phalcon.ini"
       exit $err
     end
     # Remove the phalcon.so 
