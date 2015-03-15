@@ -1,0 +1,45 @@
+#!/usr/bin/env fish
+function main
+    # ## Config
+    set -l PROG_NAME    "Phalcon PHP Framework"
+    set -l USERNAME     $USER
+    set -l MOD_DIR      (php-config --extension-dir)
+    
+    # ## Check Requirements
+    # ### Is it installed?
+    if test ! -e $MOD_DIR/phalcon.so
+        echo "Error: A $PROG_NAME installation cannot be found."
+        echo "Req Error: Cannot find install" >&2
+        exit 84
+    end
+    
+    # remove all symbolic links
+    for directory in apache2 cli cgi fpm;
+        if test -d /etc/php5/$directory/
+            if test ! -L /etc/php5/$directory/conf.d/30-phalcon.ini
+                sudo rm /etc/php5/$directory/conf.d/30-phalcon.ini
+                or begin
+                    set -l err $status
+                    echo "Error: Failure to remove /etc/php5/$directory/conf.d/30-phalcon.ini"
+                    exit $err
+                end
+            end
+        end
+    end
+    # remove phalcon.ini 
+    sudo rm /etc/php5/mods-available/phalcon.ini
+    or begin
+      set -l err $status
+      echo "Error: Failure to remove $MOD_DIR/phalcon.so"
+      exit $err
+    end
+    # Remove the phalcon.so 
+    sudo rm $MOD_DIR/phalcon.so
+    or begin
+      set -l err $status
+      echo "Error: Failure to remove $MOD_DIR/phalcon.so"
+      exit $err
+    end
+end
+
+main
