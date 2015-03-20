@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+function main() {
+# TODO: Automatically install vagrant, if needed
+# TODO: Automatically install/expose ngrok
+
+
+# ## Config
+PROG_NAME="KodingVM"
+REQ_STORAGE=20000
+INSTLOC=~/KodingVM
+
+
+
+# ## Check Requirements
+# ### Storage
+availableStorage=`df / | awk 'NR>1{print $4}'`
+if [ "$availableStorage" -lt "$REQ_STORAGE" ]; then
+  cat << EOF
+$PROG_NAME requires at least $(expr $REQ_STORAGE / 1024)MB storage, \
+and you have $(expr $availableStorage / 1024)MB free.
+
+Please free up some space, and try again. You can start by deleting any large
+files or directories in your home directory or delete software that you do
+not need.
+
+You can also upgrade your account to get more space, at the following url
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+EOF
+  echo "Req Error: Not enough storage" >&2
+  exit 84
+fi
+# ### Check if Vagrant is installed
+# We'll be automatically installing vagrant in the future, but for now
+# just check.
+which vagrant > /dev/null
+if [ $? -ne 0 ]; then
+  cat << EOF
+$PROG_NAME requires that Vagrant is already installed. Automatic
+installation will be added in the near future, but for now please
+visit the following address and install Vagrant:
+
+    https://www.vagrantup.com
+
+EOF
+  echo "Req Error: Missing vagrant" >&2
+  exit 84
+fi
+
+
+# ## Deal with a preexisting vagrantfile
+# The vagrant file shouldn't exist if the user properly uninstalled
+# but just to be safe, we shouldn't possible modifications.
+# In the future we should hash it, so we don't have to touch the file
+# if needed.
+if [ -f "$INSTLOC/Vagrantfile" ];
+then
+  cat << EOF
+A Vagrantfile already exists at the following installation path. If you
+have any modifications to this file, they will be lost.
+
+    $INSTLOC/Vagrantfile
+
+EOF
+  # read from tty, because we're piping
+  # pipe stderr to stdout, because kpm uses stderr for debug
+  read -p "Overwrite this file? (y/n):" -n 1 -r < /dev/tty 2>&1
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+  echo "" # newline
+fi
+
+
+# ## Move into install path
+mkdir -p $INSTLOC \
+&& pushd $INSTLOC
+
+
+# ## Get bootstrap data
+# To automatically configure things like koding username, key, etc,
+# we can query the user here for this information.
+#
+# Currently no bootstrap data gathered.
+
+
+# ## Write bootstrap
+cat > "$INSTLOC/.bootstrap.sh" << EOF
+#!/usr/bin/env bash
+# The following file is automatically generated.
+# !! Do not modify !!
+
+sudo apt-get update -y
+sudo apt-get install -y fish
+curl -sSL learn.koding.com/kpm.sh | sh
+
+EOF
+
+
+
+# ## Write vagrant file
+cat > "$INSTLOC/Vagrantfile" << EOF
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.provision :shell, path: ".bootstrap.sh"
+end
+
+EOF
+err=$?; if [ $err -ne 0 ]; then
+  echo "Error: Failed to write Vagrantfile"
+  echo "Error: Failed to write Vagrantfile" >&2
+  exit $err
+fi
+
+
+
+# ## Start the vm
+vagrant up
+err=$?; if [ $err -ne 0 ]; then
+  echo "Error: Vagrant VM failed to start"
+  echo "Error: vagrant up failed" >&2
+  exit $err
+fi
+
+
+
+# ## Test successful klient link
+# TODO: Communicate with klient to ensure a connected and working
+# koding installation.
+
+
+
+# ## Successful
+cat << EOF
+Your local KodingVM has been successfully created and linked. Please
+visit the following address to access your newly created VM.
+
+    https://koding.com/IDE
+
+Happy Koding!
+EOF
+
+
+}
+main
+# vim: set filetype=sh:
