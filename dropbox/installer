@@ -44,7 +44,8 @@ sudo chmod +x /usr/local/bin/dropbox
 
 
 # ## Install
-curl -L "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xvz
+cd ~
+and curl -L "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xvz
 or begin
   set -l err $status
   echo "Error: Failure downloading Dropbox"
