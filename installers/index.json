@@ -1,27 +1,3 @@
 {
-  "installers": [
-    "codeigniter",
-    "composer",
-    "django",
-    "dropbox",
-    "ftp",
-    "grunt",
-    "laravel",
-    "mean",
-    "mean-io-stack",
-    "memcached",
-    "meteor",
-    "mongodb",
-    "mysql",
-    "nginx",
-    "novnc",
-    "phpmyadmin",
-    "pip",
-    "rails",
-    "redis",
-    "tomcat",
-    "ungit",
-    "vnc",
-    "wordpress"
-  ]
+  "installers": []
 }
