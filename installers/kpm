@@ -12,25 +12,67 @@ function main
 # ## Config
 set -l PROG_NAME    "Koding Package Manager"
 set -l USERNAME     $USER
-set -l TAG          "v0.2.2"
-set -l TMPLOC       "/tmp/kpmbininstaller"
+set -l TMPLOC       "/tmp/kpm_installer"
 set -l BINLOC       "/usr/local/bin/kpm"
+set -l TAG          "v0.3.1"
 
 
+# Allow for the KPM_VER value to override the default tag
+if test -n "$KPM_VER"
+  set TAG "$KPM_VER"
+end
 
-# ## Download
-sudo curl -L -o $TMPLOC \
-  "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
+# Set the download urls, based on the (possibly overwritten) tag
+set -l SUMURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-checksum"
+set -l BINURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-kpm"
+
+
+# ## Download bin
+sudo mkdir -p "$TMPLOC"
+and sudo curl -sSL -o "$TMPLOC/kpm" "$BINURL"
 or begin
   set -l err $status
-  echo "Error $err: Failed to download $PROG_NAME $TAG"
+  echo "Error $err: Failed to download $PROG_NAME Version '$TAG'"
   exit $err
+end
+
+
+# ## Download the checksum, if it's not provided
+if test -z "$KPM_CHECKSUM"
+  sudo curl -L -o "$TMPLOC/checksum" "$SUMURL"
+  and set expectedSum (cat "$TMPLOC/checksum")
+else
+  set expectedSum "$KPM_CHECKSUM"
+end
+
+
+# ## Compare the checksum
+which md5sum > /dev/null
+and test -n "$expectedSum"
+and set downloadedSum (md5sum "$TMPLOC/kpm" | awk '{print $1}')
+and begin
+  set checkedSums "true"
+  # Sum success
+  # We got the sum, compare the two
+  if test "$downloadedSum" != "$expectedSum"
+    echo "Error: kpm binary checksums did not match"
+    echo "Error: kpm binary checksums did not match. \
+downloaded:$downloadedSum, expected:$expectedSum" >&2
+    exit 2
+  end
+end
+
+
+# Warn the user if we were unable to check the sums
+if test "$checkedSums" -ne "true"
+  echo "Warning: Unable to checksum the kpm binary"
+  echo "Warning: Unable to checksum the kpm binary, md5sum is missing" >&2
 end
 
 
 
 # ## Set perms
-sudo chmod +x "$TMPLOC"
+sudo chmod +x "$TMPLOC/kpm"
 or begin
   set -l err $status
   echo "Error $err: Failed to set $PROG_NAME permissions"
@@ -40,12 +82,17 @@ end
 
 
 # ## Move kpm to the bin loc
-sudo mv "$TMPLOC" "$BINLOC"
+sudo mv "$TMPLOC/kpm" "$BINLOC"
 or begin
   set -l err $status
   echo "Error $err: Failed to move $PROG_NAME to $BINLOC"
   exit $err
 end
+
+
+
+# ## Cleanup
+sudo rm "$TMPLOC/checksum"
 
 
 

@@ -14,7 +14,7 @@ PROG_NAME="Koding Package Manager"
 USERNAME=$USER
 TMPLOC="/tmp/kpm_installer"
 BINLOC="/usr/local/bin/kpm"
-TAG="v0.3.0"
+TAG="v0.3.1"
 # Allow for the KPM_VER value to override the default tag
 if [ ! -z "$KPM_VER" ]; then
   TAG="$KPM_VER"
