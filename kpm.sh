@@ -3,12 +3,12 @@
 # # Koding Package Manager Installer
 #
 # The following script is a shorthand script, used as a frontend
-# for the actual installer (located in ./installer). This script
+# for the actual installer (located in ./os/kpm/install). This script
 # is **not** run by KPM at all.
 #
 main()
 {
-# ## Get the os
+# ## Get the platform
 platform=`uname | tr '[:upper:]' '[:lower:]'`
 os=""
 case "$platform" in
