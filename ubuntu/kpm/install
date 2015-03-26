@@ -1,4 +1,4 @@
-#!/usr/bin/env fish
+#!/usr/bin/env bash
 #
 # # Koding Package Manager Installer
 #
@@ -8,86 +8,116 @@
 # so it needs to handle both nicely. This means that it should **NOT**
 # print to STDERR as any curl users will see the STDERR prints.
 #
-function main
+function main() {
 # ## Config
-set -l PROG_NAME    "Koding Package Manager"
-set -l USERNAME     $USER
-set -l TMPLOC       "/tmp/kpm_installer"
-set -l BINLOC       "/usr/local/bin/kpm"
-set -l TAG          "v0.3.1"
-
-
+PROG_NAME="Koding Package Manager"
+USERNAME=$USER
+TMPLOC="/tmp/kpm_installer"
+BINLOC="/usr/local/bin/kpm"
+TAG="v0.3.1"
 # Allow for the KPM_VER value to override the default tag
-if test -n "$KPM_VER"
-  set TAG "$KPM_VER"
-end
+if [ ! -z "$KPM_VER" ]; then
+  TAG="$KPM_VER"
+fi
 
-# Set the download urls, based on the (possibly overwritten) tag
-set -l SUMURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-checksum"
-set -l BINURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-kpm"
+
+# ## Get the os
+# Examples:
+# - linux
+# - darwin
+# - windows.. not applicable in bash, though cygwin might be interesting
+platform=`uname | tr '[:upper:]' '[:lower:]'`
+case "$platform" in
+  linux|darwin|windows)
+    ;;
+  *)
+    cat << EOF
+Error 84: Unknown platform.
+EOF
+  exit 84
+  ;;
+esac
+
+
+# Set the download urls, based on the (possibly overwritten) tag and os
+SUMURL="https://github.com/koding/kpm-scripts/releases/download/$TAG/$platform-checksum"
+BINURL="https://github.com/koding/kpm-scripts/releases/download/$TAG/$platform-kpm"
+
+
+# ## Inform the user about sudo permissions
+cat << EOF
+
+$PROG_NAME is being installed. Please provide your sudo password if
+prompted.
+
+EOF
 
 
 # ## Download bin
-sudo mkdir -p "$TMPLOC"
-and sudo curl -sSL -o "$TMPLOC/kpm" "$BINURL"
-or begin
-  set -l err $status
+sudo mkdir -p "$TMPLOC" \
+&& sudo curl -sSL -o "$TMPLOC/kpm" "$BINURL"
+err=$?; if [ "$err" -ne 0 ]; then
   echo "Error $err: Failed to download $PROG_NAME Version '$TAG'"
   exit $err
-end
+fi
 
 
-# ## Download the checksum, if it's not provided
-if test -z "$KPM_CHECKSUM"
-  sudo curl -L -o "$TMPLOC/checksum" "$SUMURL"
-  and set expectedSum (cat "$TMPLOC/checksum")
-else
-  set expectedSum "$KPM_CHECKSUM"
-end
+
+# ## Download expected checksum
+sudo curl -sSL -o "$TMPLOC/checksum" "$SUMURL"
+err=$?; if [ "$err" -ne 0 ]; then
+  echo "Error $err: Failed to download $PROG_NAME Checksum '$TAG'"
+  exit $err
+fi
+expectedSum=`cat "$TMPLOC/checksum"`
+
+
+
+# ## Calculate binary sum
+downloadedSum=""
+case "$platform" in
+  linux)
+    downloadedSum=`md5sum "$TMPLOC/kpm" | awk '{print $1}'`
+    ;;
+  darwin)
+    downloadedSum=`md5 -q $TMPLOC/kpm`
+    ;;
+esac
+
 
 
 # ## Compare the checksum
-which md5sum > /dev/null
-and test -n "$expectedSum"
-and set downloadedSum (md5sum "$TMPLOC/kpm" | awk '{print $1}')
-and begin
-  set checkedSums "true"
+if [ ! -z "$expectedSum" ] && [ ! -z "$downloadedSum" ]; then
   # Sum success
   # We got the sum, compare the two
-  if test "$downloadedSum" != "$expectedSum"
+  if [ "$downloadedSum" != "$expectedSum" ]; then
     echo "Error: kpm binary checksums did not match"
-    echo "Error: kpm binary checksums did not match. \
-downloaded:$downloadedSum, expected:$expectedSum" >&2
+    # Disabling exit for testing
     exit 2
-  end
-end
-
-
-# Warn the user if we were unable to check the sums
-if test "$checkedSums" -ne "true"
-  echo "Warning: Unable to checksum the kpm binary"
-  echo "Warning: Unable to checksum the kpm binary, md5sum is missing" >&2
-end
+  fi
+else
+  cat << EOF
+Warning: Unable to compare checksums. KPM binary may not be correct.
+EOF
+fi
 
 
 
 # ## Set perms
 sudo chmod +x "$TMPLOC/kpm"
-or begin
-  set -l err $status
+err=$?; if [ "$err" -ne 0 ]; then
   echo "Error $err: Failed to set $PROG_NAME permissions"
   exit $err
-end
+fi
 
 
 
 # ## Move kpm to the bin loc
 sudo mv "$TMPLOC/kpm" "$BINLOC"
-or begin
-  set -l err $status
+err=$?; if [ "$err" -ne 0 ]; then
   echo "Error $err: Failed to move $PROG_NAME to $BINLOC"
   exit $err
-end
+fi
 
 
 
@@ -96,13 +126,14 @@ sudo rm "$TMPLOC/checksum"
 
 
 
-set -l downloadedVer (kpm --version | awk '{print $2}')
+# ## Success
+downloadedVer=`kpm --version | awk '{print $2}'`
 echo "
 $PROG_NAME $downloadedVer installation is complete. For help,
 run the following command:
 
     \$ kpm --help
 "
-end
+}
 main
-# vim: set filetype=fish:
+# vim: set filetype=sh:
