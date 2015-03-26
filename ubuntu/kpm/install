@@ -14,7 +14,7 @@ set -l PROG_NAME    "Koding Package Manager"
 set -l USERNAME     $USER
 set -l TMPLOC       "/tmp/kpm_installer"
 set -l BINLOC       "/usr/local/bin/kpm"
-set -l TAG          "v0.2.2"
+set -l TAG          "v0.3.1"
 
 
 # Allow for the KPM_VER value to override the default tag
@@ -23,13 +23,13 @@ if test -n "$KPM_VER"
 end
 
 # Set the download urls, based on the (possibly overwritten) tag
-set -l SUMURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/checksum"
-set -l BINURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
+set -l SUMURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-checksum"
+set -l BINURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-kpm"
 
 
 # ## Download bin
 sudo mkdir -p "$TMPLOC"
-and sudo curl -L -o "$TMPLOC/kpm" "$BINURL"
+and sudo curl -sSL -o "$TMPLOC/kpm" "$BINURL"
 or begin
   set -l err $status
   echo "Error $err: Failed to download $PROG_NAME Version '$TAG'"

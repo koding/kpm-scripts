@@ -23,8 +23,8 @@ if test -n "$KPM_VER"
 end
 
 # Set the download urls, based on the (possibly overwritten) tag
-set -l SUMURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-checksum"
-set -l BINURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/linux-kpm"
+set -l SUMURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/checksum"
+set -l BINURL       "https://github.com/koding/kpm-scripts/releases/download/$TAG/kpm"
 
 
 # ## Download bin

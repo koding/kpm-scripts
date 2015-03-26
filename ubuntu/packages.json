@@ -160,6 +160,11 @@
     "tags": ["repl", "postgresql", "sql"]
   },
   {
+    "name": "phalcon",
+    "description": "An efficient high performance web framework",
+    "tags": ["php", "c"]
+  },
+  {
     "name": "phpmyadmin",
     "description": "A MySQL database management tool",
     "tags": ["php", "mysql"]
