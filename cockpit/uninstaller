@@ -1,0 +1,96 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Cockpit"
+set -l USERNAME     $USER
+set -l INSTLOC      ~/Web/cockpit
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e "$INSTLOC"
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes configuration, database, and any data that
+the following directory contains:
+
+    $INSTLOC
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Remove cockpit
+rm -rf "$INSTLOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME"
+  echo "Error: Failed to remove $PROG_NAME"
+  exit $err
+end
+
+
+
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y php5-sqlite
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Reload apache
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Warning: Failure reloading Apache"
+  echo "Warning: Failure reloading Apache" >&2
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

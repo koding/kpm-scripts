@@ -1,0 +1,115 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "CouchDB"
+set -l REQ_STORAGE  115024
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if which couchdb > /dev/null
+  echo "
+A previous $PROG_NAME installation is detected. The API is accessible
+from the following URL:
+
+    $USERNAME.koding.io:5984
+"
+  echo "Req Error: Already installed" >&2
+  exit 84
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 84
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 84
+end
+
+
+
+# ## Add repo
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nAdding $PROG_NAME Repository.."
+#sudo apt-get update
+#and sudo apt-get install -y software-properties-common
+sudo add-apt-repository -y ppa:couchdb/stable
+and sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to add $PROG_NAME repository and update"
+  echo "Error: Failed to add $PROG_NAME repository and update" >&2
+  exit $err
+end
+
+
+
+# ## Install dependencies
+sudo apt-get install -y couchdb
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME dependencies"
+  echo "Error: apt-get failed to install dependencies" >&2
+  exit $err
+end
+
+
+
+# We should be checking for failure after each sed, but so far i
+# haven't found a (sane) method fail on sed not matching a pattern.
+sudo sed -i -e "s/bind_address = 127.0.0.1/bind_address = 0.0.0.0/g" /etc/couchdb/default.ini
+
+
+
+# ## Restart
+sudo service couchdb restart
+or begin
+  set -l err $status
+  echo "Error: Failure restarting $PROG_NAME"
+  echo "Error: Failure restarting $PROG_NAME service" >&2
+  exit $err
+end
+
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. The API is accessible from the
+following URL:
+
+    $USERNAME.koding.io:5984
+"
+end
+main
+# vim: set filetype=fish:
+

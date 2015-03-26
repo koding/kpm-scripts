@@ -1,0 +1,184 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Octopress"
+set -l REQ_STORAGE  100
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if test -e ~/octopress
+  echo "
+A previous $PROG_NAME installation is detected. To access it,
+visit the following url:
+
+    $USERNAME.koding.io/octopress
+
+To compile it, run the following commands:
+
+    \$ cd ~/octopress
+    \$ rake generate
+"
+  echo "Req Error: Already installed" >&2
+  exit 84
+end
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Not logged in as user" >&2
+  exit 84
+end
+# ### Storage
+set -l available_storage (df / | awk 'NR>1{print $4}')
+if test (math $available_storage - $REQ_STORAGE) -lt 0
+  set -l hReq (math $REQ_STORAGE / 1024)
+  set -l hAvl (math $available_storage / 1024)
+  echo "
+$PROG_NAME requires at least $hReq""MB storage, \
+and you have $hAvl""MB free.
+
+Please free up some space, and try again. You can start by deleting any
+large files or directories in your home directory or delete software that
+you do not need.
+
+You can also upgrade your account to get more space, at the following url:
+
+    https://koding.com/Pricing
+
+Please refer to the following guide for tips on how to free up VM storage:
+
+    http://learn.koding.com/guides/freeing-up-space
+"
+  echo "Req Error: Not enough storage" >&2
+  exit 84
+end
+# ### Check if ruby is installed
+if not which ruby > /dev/null
+  echo "
+$PROG_NAME requires that Ruby is already installed. You can install
+it with the following command:
+
+    \$ kpm install ruby2
+"
+  echo "Req Error: Missing ruby" >&2
+  exit 84
+end
+# ### Check if gem is installed
+if not which gem > /dev/null
+  echo "
+$PROG_NAME requires that Ruby Gem is already installed. You can install
+it with the following command:
+
+    \$ kpm install ruby2
+"
+  echo "Req Error: Missing gem" >&2
+  exit 84
+end
+# ### Apache
+if not which apache2 > /dev/null
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install it
+with the following command:
+
+    \$ sudo apt-get install apache2
+"
+  echo "Req Error: Missing apache2" >&2
+  exit 84
+end
+
+
+
+# ## Update
+# This message is here due to a pause on apt-get update that might
+# confuse the user. A vague message will help them know that it isn't
+# froze.
+echo -e "\nUpdating.."
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to update package list"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
+# ## Install dependencies
+sudo apt-get install -y make
+or begin
+  set -l err $status
+  echo "Error: Failure installing $PROG_NAME dependencies"
+  echo "Error: apt-get failed to install dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Install bundle (dependency)
+sudo gem install bundle
+or begin
+  set -l err $status
+  echo "Error: Failed to install bundle dependency"
+  echo "Error: Failed to install bundle dependency" >&2
+  exit $err
+end
+
+
+
+# ## Download
+git clone git://github.com/imathis/octopress.git octopress
+and cd octopress
+or begin
+  set -l err $status
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: Failed to git clone octopress" >&2
+  exit $err
+end
+
+
+
+# ## Configure
+grep "root: /" ~/octopress/_config.yml > /dev/null
+and sed -i -e "s/root: \//root: \/octopress\//g" ~/octopress/_config.yml
+or begin
+  set -l err $status
+  echo "Error: Failed to configure $PROG_NAME"
+  echo "Error: Failed to configure $PROG_NAME" >&2
+  exit $err
+end
+
+
+
+# ## Install / generate
+bundle install
+and rake install
+and rake generate
+and ln -s ~/octopress/public ~/Web/octopress
+or begin
+  set -l err $status
+  echo "Error: Failed to install $PROG_NAME"
+  echo "Error: bundle install, rake install, rake generate failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. To access it, visit the following url:
+
+    $USERNAME.koding.io/octopress
+
+To compile it, run the following commands:
+
+    \$ cd ~/octopress
+    \$ rake generate
+"
+end
+main
+# vim: set filetype=fish:

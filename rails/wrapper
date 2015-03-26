@@ -1,0 +1,44 @@
+#!/usr/bin/env fish
+
+
+# If there are no arguments given to this command, proxy
+# to _rails
+if test (count $argv) -lt 1
+  _rails
+  exit $status
+end
+
+
+
+# $argv has more args than just server, so check
+if test "$argv[1]" = "server"
+  # If the only arg is server, just run it with our ammendments and
+  # proceed
+  if test (count $argv) -eq 1
+    _rails server --bind=0.0.0.0
+    exit $status
+  end
+
+  # We don't know how many args there are, so run server, then our
+  # ip, and the rest of the args, if the user has not defined a bind.
+  set -l argStr " $argv"
+
+  # This switch serves as a way to look for the -b and --bind parameter.
+  # If it matches an empty case, nothing happens and the switch exits.
+  switch "$argStr"
+    case "* --bind=*"
+    case "* --bind*"
+    case "* -b*"
+    case "*"
+      _rails server --bind=0.0.0.0 $argv[2..-1]
+      exit $status
+  end
+end
+
+
+# And if nothing matches, just run whatever the user wanted
+_rails $argv
+exit $status
+
+
+# vim: set filetype=fish:

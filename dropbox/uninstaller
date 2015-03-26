@@ -1,0 +1,53 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Dropbox"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+You must be logged in as a non-root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: User root"
+  exit 84
+end
+# ### Installed?
+if not test -e ~/.dropbox-dist
+  echo "
+A $PROG_NAME installation cannot be found.
+"
+  echo "Req Error: Cannot find uninstaller" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+rm -rf ~/.dropbox-dist
+rm -rf ~/.dropbox
+sudo rm /usr/local/bin/dropbox
+sudo rm /usr/local/bin/dropboxd
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+if test -e ~/Dropbox
+  echo "Note that kpm *did not* remove your Dropbox files found
+  in ~/Dropbox. You can remove that folder if those files are no longer
+  desired.
+  "
+end
+
+
+
+end
+main
+# vim: set filetype=fish:

@@ -1,0 +1,128 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Drupal"
+set -l USERNAME     $USER
+set -l INSTLOC      ~/Web/drupal
+set -l DBNAME       "kpm_drupal_db"
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e "$INSTLOC"
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes configuration, databases and any files that
+the following directory contains:
+
+    $INSTLOC
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Remove database
+# If mysql is installed, remove database. If it's not, ignore db
+if which mysql > /dev/null
+  # ### Get MySQL User Password
+  stty -echo < /dev/tty
+  for x in (seq 3)
+    echo -n "
+Enter your MySQL root user password: "
+    if not read password < /dev/tty
+      stty echo < /dev/tty
+      exit 1
+    end
+    if test -n $password
+      break
+    else if test $x -eq 3
+      echo -e "\nAborting after 3 empty inputs."
+      stty echo < /dev/tty
+      exit 1
+    else
+      echo -e "\nYou must enter a password. Please retry."
+    end
+  end
+  stty echo < /dev/tty
+
+  # We're not testing the login here, since we're not requiring
+  # that this section passes. This design may change in the future.
+  mysql -uroot -p"$password" -e "DROP DATABASE $DBNAME;"
+  or begin
+    set -l err $status
+    echo "Warning: Removing database failed"
+    echo "Warning: Drop database failed with exit $err" >&2
+  end
+end
+
+
+
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y php5-gd
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Reload Apache
+sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Error: Failed to reload Apache"
+  echo "Error: Failed to reload Apache" >&2
+  exit $err
+end
+
+
+
+# ## Remove dir
+rm -rf "$INSTLOC"
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

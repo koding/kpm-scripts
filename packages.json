@@ -1,0 +1,242 @@
+[
+  {
+    "name": "codeigniter",
+    "description": "A PHP web framework built with a small footprint",
+    "tags": ["php"]
+  },
+  {
+    "name": "composer",
+    "description": "A package manager tool for PHP",
+    "tags": ["php"]
+  },
+  {
+    "name": "couchdb",
+    "description": "A NOSQL JSON oriented database",
+    "tags": ["database", "nosql"]
+  },
+  {
+    "name": "cassandra",
+    "description": "A decentralized 'big data' database",
+    "tags": ["database", "nosql"]
+  },
+  {
+    "name": "cockpit",
+    "description": "A CMS designed for simplicity",
+    "tags": ["wiki", "php"]
+  },
+  {
+    "name": "django",
+    "description": "A popular Python web framework",
+    "tags": ["python"]
+  },
+  {
+    "name": "docker",
+    "description": "A platfor for managing Linux Containers",
+    "tags": ["container", "docker"]
+  },
+  {
+    "name": "dropbox",
+    "description": "The official Dropbox command line client",
+    "tags": ["storage"]
+  },
+  {
+    "name": "drupal",
+    "description": "A popular Content Management System",
+    "tags": ["cms", "content management", "php"]
+  },
+  {
+    "name": "elasticsearch",
+    "description": "A powerful search and analytics engine",
+    "tags": ["search"]
+  },
+  {
+    "name": "elixir",
+    "description": "A dynamic, functional language",
+    "tags": ["erlang", "elixir"]
+  },
+  {
+    "name": "erlang",
+    "description": "A general-purpose concurrent, garbage-collected language",
+    "tags": ["erlang"]
+  },
+  {
+    "name": "ftp",
+    "description": "An FTP server powered by ProFTPd",
+    "tags": ["file transfer", "ftp"]
+  },
+  {
+    "name": "gdrive",
+    "description": "The official Google Drive command line client",
+    "tags": ["storage"]
+  },
+  {
+    "name": "grunt",
+    "description": "A NodeJS task runner and build tool",
+    "tags": ["node", "nodejs"]
+  },
+  {
+    "name": "jenkins",
+    "description": "An extensible continuous integration server",
+    "tags": ["continuous integration", "ci"]
+  },
+  {
+    "name": "joomla",
+    "description": "A popular Content Management System",
+    "tags": ["cms", "content management", "php"]
+  },
+  {
+    "name": "laravel",
+    "description": "A PHP web framework with expressive and elegant syntax",
+    "tags": ["php"]
+  },
+  {
+    "name": "linux-dash",
+    "description": "A low-overhead system monitoring web dashboard",
+    "tags": ["system", "administration", "admin", "monitor"]
+  },
+  {
+    "name": "mediawiki",
+    "description": "A wiki, originally for use on Wikipedia",
+    "tags": ["wiki", "php"]
+  },
+  {
+    "name": "mean",
+    "description": "A full stack javascript framework",
+    "tags": ["javascript", "node", "nodejs", "angularjs", "expressjs"]
+  },
+  {
+    "name": "mean-io-stack",
+    "description": "Installs everything needed for a MeanJS installation",
+    "tags": ["javascript", "node", "nodejs", "mongodb", "mongo"]
+  },
+  {
+    "name": "memcached",
+    "description": "A high-performance memory object caching system",
+    "tags": ["database", "nosql"]
+  },
+  {
+    "name": "meteor",
+    "description": "A full stack javascript framework",
+    "tags": ["javascript", "node", "nodejs"]
+  },
+  {
+    "name": "mongodb",
+    "description": "A popular NoSQL document database",
+    "tags": ["database", "nosql"]
+  },
+  {
+    "name": "mysql",
+    "description": "A popular relational database",
+    "tags": ["database", "sql"]
+  },
+  {
+    "name": "nginx",
+    "description": "A HTTP and reverse proxy server",
+    "tags": ["web server"]
+  },
+  {
+    "name": "novnc",
+    "description": "A vnc client using HTML5 (WebSockets, Canvas)",
+    "tags": ["vnc"]
+  },
+  {
+    "name": "octopress",
+    "description": "A Jekyll blogging platform",
+    "tags": ["jekyll"]
+  },
+  {
+    "name": "oracle-java7",
+    "description": "Oracle's Java Development Kit 7",
+    "tags": ["java"]
+  },
+  {
+    "name": "prestashop",
+    "description": "An e-commerce solution",
+    "tags": ["ecommerce"]
+  },
+  {
+    "name": "pgcli",
+    "description": "A REPL for PostgreSQL",
+    "tags": ["repl", "postgresql", "sql"]
+  },
+  {
+    "name": "phalcon",
+    "description": "An efficient high performance web framework",
+    "tags": ["php", "c"]
+  },
+  {
+    "name": "phpmyadmin",
+    "description": "A MySQL database management tool",
+    "tags": ["php", "mysql"]
+  },
+  {
+    "name": "phppgadmin",
+    "description": "A PostgreSQL database management tool",
+    "tags": ["php", "postgresql"]
+  },
+  {
+    "name": "pip",
+    "description": "A Python package manager",
+    "tags": ["python"]
+  },
+  {
+    "name": "postgresql",
+    "description": "An advanced SQL database",
+    "tags": ["sql", "database"]
+  },
+  {
+    "name": "pyrocms",
+    "description": "An MVC CMS built to be easy to use, theme and develop with",
+    "tags": ["php", "content management system", "cms"]
+  },
+  {
+    "name": "rails",
+    "description": "A Ruby full-stack web framework",
+    "tags": ["ruby"]
+  },
+  {
+    "name": "redis",
+    "description": "An advanced key-value cache and store",
+    "tags": ["database", "nosql"]
+  },
+  {
+    "name": "rockmongo",
+    "description": "A web based MongoDB administration tool",
+    "tags": ["mongodb", "administration"]
+  },
+  {
+    "name": "ruby2",
+    "description": "The Ruby programming language, version 2.X",
+    "tags": ["ruby"]
+  },
+  {
+    "name": "tomcat",
+    "description": "A Java web server and servlet container",
+    "tags": ["java"]
+  },
+  {
+    "name": "ungit",
+    "description": "A web based interface for Git",
+    "tags": ["git"]
+  },
+  {
+    "name": "vnc",
+    "description": "A vnc server powered by TightVNC",
+    "tags": ["vnc"]
+  },
+  {
+    "name": "vsftpd",
+    "description": "An FTP server powered by vsFTPd",
+    "tags": ["file transfer", "ftp"]
+  },
+  {
+    "name": "webmin",
+    "description": "A web-based interface for system administration",
+    "tags": ["system", "administration", "admin", "php"]
+  },
+  {
+    "name": "wordpress",
+    "description": "A web software for building websites and blogs",
+    "tags": ["php"]
+  }
+]

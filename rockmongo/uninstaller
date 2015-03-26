@@ -1,0 +1,74 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Rockmongo"
+set -l USERNAME     $USER
+set -l INSTLOC      ~/Web/rockmongo
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e "$INSTLOC"
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall driver
+sudo pecl uninstall mongo
+or begin
+  set -l err $status
+  echo "Error: Failed to remove mongo driver"
+  echo "Error: Pecl failed to remove mongo driver" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y php5-dev php5-cli php-pear
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Remove config
+sudo sed -i -e "s/extension=mongo.so//g" /etc/php5/apache2/php.ini
+and sudo service apache2 reload
+or begin
+  set -l err $status
+  echo "Warning $err: Failed to remove config and reload apache"
+  echo "Warning $err: Failed to remove config and reload apache" >&2
+end
+
+
+
+
+# ## Remove inst dir
+rm -rf "$INSTLOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to remove installation directory"
+  echo "Error: Failed to remove installation dir, '$INSTLOC'" >&2
+  exit $err
+end
+
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

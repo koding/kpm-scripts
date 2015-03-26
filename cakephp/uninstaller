@@ -1,0 +1,86 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "CakePHP"
+set -l USERNAME     $USER
+set -l INSTALL_LOC  ~/Web/cakephp
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e $INSTALL_LOC
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes configuration and any data that the
+$INSTALL_LOC folder contains.
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Remove
+rm -rf $INSTALL_LOC
+# I don't think it's even possible for `rm -rf` to return a non-zero, but
+# checking regardless
+or begin
+  set -l err $status
+  echo "Error: Unknown error when removing $PROG_NAME"
+  echo "Unknown Error: rm -rf failed to remove $INSTALL_LOC" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall Dependencies
+sudo apt-get purge --auto-remove -y php5-intl
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
