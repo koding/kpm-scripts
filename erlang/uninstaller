@@ -1,0 +1,48 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Erlang"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which erl > /dev/null
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y erlang
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall Deb
+sudo dpkg --purge erlang-solutions
+or begin
+  set -l err $status
+  echo "Warning $err: Failed to remove dependency"
+  echo "Warning $err: dpkg failed to uninstall erlang solutions" >&2
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

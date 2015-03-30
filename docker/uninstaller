@@ -1,0 +1,71 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Docker"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which docker > /dev/null
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y lxc-docker
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Remove the docker repo
+sudo rm "/etc/apt/sources.list.d/docker.list"
+or begin
+  set -l err $status
+  echo "Error: Failed to remove docker repo"
+  echo "Error: Failed to remove docker repo" >&2
+  exit $err
+end
+
+
+
+# ## Import the repo key
+sudo apt-key del "36A1D7869245C8950F966E92D8576A8BA88D21E9"
+or begin
+  set -l err $status
+  echo "Error: Failed to remove Docker repository key"
+  echo "Error: Failed to remove Docker repository key" >&2
+  exit $err
+end
+
+
+
+# ## Update, to remove docker repo
+sudo apt-get update
+or begin
+  set -l err $status
+  echo "Error: Failed to update package list"
+  echo "Error: apt-get update failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

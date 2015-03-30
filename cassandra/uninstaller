@@ -1,0 +1,62 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Cassandra"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which cassandra > /dev/null
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Remove keys
+sudo apt-key del F758CE318D77295D
+and sudo apt-key del 2B5C1B00
+and sudo apt-key del 0353B12C
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME keys"
+  echo "Error: apt-get failed to delete apt-keys" >&2
+  exit $err
+end
+
+
+
+# ## Remove repo
+sudo apt-add-repository --remove 'deb http://www.apache.org/dist/cassandra/debian 21x main'
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME repo"
+  echo "Error: add-apt-repository failed to remove $PROG_NAME repo" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y cassandra
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME dependencies"
+  echo "Error: apt-get failed to uninstall dependencies" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

@@ -1,0 +1,164 @@
+#!/usr/bin/env fish
+function main
+
+
+
+# ## Config
+set -l PROG_NAME    "WordPress"
+set -l USERNAME     $USER
+set -l DBNAME       "kpm_wordpress_db"
+set -l INSTALL_LOC  ~/Web/wordpress
+
+
+
+# ## Check Requirements
+# ### Is it installed?
+if not test -e "$INSTALL_LOC"
+  echo "Error: A $PROG_NAME installation in the default kpm install
+location cannot be found."
+  echo "Req Error: Cannot find install" >&2
+  exit 84
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE the kpm installation of
+$PROG_NAME. This includes configuration, database, and any data that
+it contains.
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Remove database
+# If mysql is installed, remove database. If it's not, ignore db
+if which mysql > /dev/null
+  # ### Start MySQL
+  # We're restarting here, to not fail if mysql was
+  # already running. Now, if it fails, mysql truly
+  # failed to start.
+  echo "Checking MySQL status"
+  sudo service mysql restart > /dev/null
+  or begin
+    set -l err $status
+    echo "Error: Failed to restart MySQL."
+    echo "Error: Failed to restart MySQL." >&2
+    exit $err
+  end
+
+  # ### Get MySQL User Password
+  stty -echo < /dev/tty
+  for x in (seq 3)
+    echo -n "
+Enter your MySQL root user password: "
+    if not read password < /dev/tty
+      stty echo < /dev/tty
+      exit 1
+    end
+    if test -n $password
+      break
+    else if test $x -eq 3
+      echo -e "\nAborting after 3 empty inputs."
+      stty echo < /dev/tty
+      exit 1
+    else
+      echo -e "\nYou must enter a password. Please retry."
+    end
+  end
+  stty echo < /dev/tty
+  echo ""
+
+  # ### Test mysql password
+  # Note that we're piping the STDERR to devnull, since that is where
+  # mysql will show errors to the user.
+  mysql -uroot -p$password -e "" 2> /dev/null
+  or begin
+    set -l err $status
+    echo "Error: Invalid mysql root user authorization"
+    echo "Error: Mysql password test failed. Invalid pass" >&2
+    exit $err
+  end
+
+  # ### Drop database
+  mysql -uroot -p"$password" -e "DROP DATABASE $DBNAME;"
+  or begin
+    set -l err $status
+    echo "Error: Removing database failed"
+    echo "Error: Drop database failed with exit $err" >&2
+    exit $err
+  end
+end
+
+
+
+# ## Remove
+rm -rf $INSTALL_LOC
+# I don't think it's even possible for `rm -rf` to return a non-zero, but
+# checking regardless
+or begin
+  set -l err $status
+  echo "Error: Unknown error when removing $PROG_NAME"
+  echo "Unknown Error: rm -rf failed to remove $INSTALL_LOC" >&2
+  exit $err
+end
+
+
+
+
+# ## Uninstall apt dependencies
+sudo apt-get purge -y php5-mysql
+or begin
+  set -l err $status
+  echo "Error: Failed to remove dependencies of $PROG_NAME"
+  echo "Error: apt-get purge php5-mysql failed" >&2
+  exit $err
+end
+
+
+
+# ## Autoremove
+sudo apt-get autoremove -y
+or begin
+  set -l err $status
+  echo "Error: Failed to cleanup after $PROG_NAME"
+  echo "Error: apt-get autoremove failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+
+
+end
+main
+# vim: set filetype=fish:

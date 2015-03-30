@@ -1,0 +1,43 @@
+#!/usr/bin/env fish
+function main
+
+# ## Config
+set -l PROG_NAME    "Grunt"
+set -l USERNAME     $USER
+
+# ## Check Requirements
+# ### Check if installed
+if not which grunt > /dev/null
+  echo "
+A $PROG_NAME installation cannot be found.
+"
+  echo "Req Error: Cannot find install" >&2
+  exit 84
+end
+
+# ## Uninstall Grunt
+sudo -H npm uninstall -g grunt-cli
+or begin
+  set -l err $status
+  echo "Error: Failed to uninstall $PROG_NAME"
+  echo "Error: npm uninstall -g grunt-cli failed" >&2
+  exit $err
+end
+
+# ## Clean npm cache
+sudo -H npm cache clean
+or begin
+  set -l err $status
+  echo "Error: Failed to clear cache $PROG_NAME"
+  echo "Error: npm cache clean failed" >&2
+  exit $err
+end
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+
+end
+main
+# vim: set filetype=fish:

@@ -1,0 +1,78 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "Dropbox"
+set -l REQ_STORAGE  4056
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: User root"
+  exit 84
+end
+# ### Already installed?
+if test -e ~/.dropbox-dist
+  echo "
+$PROG_NAME is already installed. Don't forget to link your Dropbox account
+by running the following command and following the onscreen instructions.
+
+    \$ dropboxd
+
+After linking your Dropbox account, take a look at the Dropbox CLI for
+added functionality (such as excluding files), with the following command.
+
+    \$ dropbox
+"
+  echo "Req Error: Already installed" >&2
+  exit 84
+end
+
+
+
+# ## Download CLI
+sudo curl -o /usr/local/bin/dropbox \
+  -L "https://www.dropbox.com/download?dl=packages/dropbox.py"
+sudo chmod +x /usr/local/bin/dropbox
+
+
+
+# ## Install
+cd ~
+and curl -L "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xvz
+or begin
+  set -l err $status
+  echo "Error: Failure downloading Dropbox"
+  echo "Error: curl and tar failed" >&2
+  exit $err
+end
+
+
+
+# ## Symlink
+# Symlink the dropbox daemon for an easy UX
+sudo ln -s ~/.dropbox-dist/dropboxd /usr/local/bin/dropboxd
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete. Make sure to link your Dropbox account
+by running the following command and following the onscreen instructions.
+
+    \$ dropboxd
+
+After linking your Dropbox account, take a look at the Dropbox CLI for
+added functionality (such as excluding files), with the following command.
+
+    \$ dropbox
+"
+end
+main
+# vim: set filetype=fish:

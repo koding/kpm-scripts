@@ -1,0 +1,64 @@
+#!/usr/bin/env fish
+function main
+
+
+
+# ## Config
+set -l PROG_NAME    "ProFTPd"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### User not root
+if test "$USERNAME" = "root"
+  echo "
+To uninstall the KPM installation of $PROG_NAME, you need to be logged
+in as a normal user, not root. Please which to your normal user and
+try this command again.
+"
+  echo "Req Error: Logged in as root" >&2
+  exit 84
+end
+# ### Check if installed
+if not which proftpd > /dev/null
+  echo "
+An installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge -y proftpd-basic
+or begin
+  set -l err $status
+  echo "Error: Failed to uninstall $PROG_NAME"
+  echo "Error: apt-get purge failed" >&2
+  exit $err
+end
+
+
+
+# ## Autoremove
+sudo apt-get -y autoremove
+or begin
+  set -l err $status
+  echo "Error: Failed to cleanup after $PROG_NAME"
+  echo "Error: apt-get autoremove failed" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+
+
+end
+main
+# vim: set filetype=fish:

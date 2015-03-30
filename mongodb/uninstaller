@@ -1,0 +1,93 @@
+#!/usr/bin/env fish
+function main
+
+
+
+# ## Config
+set -l PROG_NAME    "MongoDB"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+if not which mongod > /dev/null
+  echo "A $PROG_NAME installation cannot be found."
+  echo "Req Error: Cannot find install" >&2
+  exit 84
+end
+
+
+
+# ## Confirm
+echo "
+By uninstalling $PROG_NAME, you will FULLY DELETE all $PROG_NAME
+configuration, databases, and any data that they contain.
+
+This cannot be undone.
+
+Are you sure?
+"
+for x in (seq 3)
+  echo -n "(yes/no, y/n) "
+  read -l confirm < /dev/tty
+  or begin
+    echo "Input Error: Empty confirm response" >&2
+    exit 1
+  end
+  switch "$confirm"
+    case "yes" "y"
+      break
+    case "no" "n"
+      exit 1
+    case "*"
+      if test "$x" -eq 3
+        echo -e "\nAborting after 3 failed attempts"
+        exit 1
+      else
+        echo -e "\nInvalid response, please retry."
+      end
+  end
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge -y mongodb mongodb-server mongodb-clients
+or begin
+  set -l err $status
+  echo "Error: Failed to uninstall $PROG_NAME"
+  echo "Error: apt-get purge failed" >&2
+  exit $err
+end
+
+
+
+# ## Autoremove
+sudo apt-get -y autoremove
+or begin
+  set -l err $status
+  echo "Error: Failed to cleanup after $PROG_NAME"
+  echo "Error: apt-get autoremove failed" >&2
+  exit $err
+end
+
+
+
+# ## Remove database
+if test -e "/var/lib/mongodb"
+  sudo rm -r "/var/lib/mongodb"
+else
+  echo "Warning: $PROG_NAME Database could not be found"
+  echo "Warning: /var/lib/mongodb does not exist" >&2
+end
+
+
+
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+
+
+end
+main
+# vim: set filetype=fish:

@@ -1,0 +1,60 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "TightVNC"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which vncserver > /dev/null
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Kill active sessions
+# Loop through all the pid files and kill any active sessions
+#
+# If you don't do this, they'll keep running and even cause the
+# vncserver start to fail.
+for pidf in ~/.vnc/*.pid
+  #                         Matches: foo/username:1.pid
+  set -l i (echo "$pidf" | sed -r "s/.*\:([0-9]*)\.pid/\1/")
+  echo "Killing active VNC Session (pid: $i)"
+  vncserver -kill ":$i"
+end
+
+
+
+# ## Uninstall
+sudo apt-get purge --auto-remove -y xfce4 xfce4-goodies tightvncserver
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME"
+  echo "Error: apt-get failed to uninstall" >&2
+  exit $err
+end
+
+
+
+# ## Remove config passwd
+# We may remove the entire config in the future,
+# but for now lets leave it so users can modify xstartup without
+# fear.
+rm -rf ~/.vnc/passwd
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

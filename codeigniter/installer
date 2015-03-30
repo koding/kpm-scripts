@@ -1,0 +1,96 @@
+#!/usr/bin/env fish
+function main
+
+
+
+# ## Config
+set -l PROG_NAME    "Codeigniter"
+set -l REQ_STORAGE  4764
+set -l USERNAME     $USER
+set -l INSTALL_LOC  ~/Web/codeigniter
+
+
+
+# ## Check Requirements
+# ### Existing Install
+if test -e $INSTALL_LOC
+  echo "
+The install location '$INSTALL_LOC' already exists. Please move that
+directory before installing $PROG_NAME in that location. If $PROG_NAME
+is properly installed there, you can access it at the following address:
+
+    $USERNAME.koding.io/codeigniter
+
+"
+  exit 1
+end
+# ## Check if root
+if test "$USERNAME" = "root"
+  echo "
+$PROG_NAME should not be installed from the root user. Please switch
+to your normal Koding user, and try this command again.
+"
+  echo "Req Error: Logged in as root" >&2
+  exit 84
+end
+# ### Apache
+if not test -e /usr/sbin/apache2
+  echo "
+$PROG_NAME requires that Apache is already installed. Please install
+Apache first.
+"
+  exit 1
+end
+
+
+
+# ## Download
+curl -L -o /tmp/2.2-stable.zip https://github.com/bcit-ci/CodeIgniter/archive/2.2-stable.zip
+or begin
+  set -l err $status
+  echo "Error: Failed to download $PROG_NAME"
+  echo "Error: curl failed" >&2
+  exit $err
+end
+
+
+
+# ## Unzip
+unzip -d /tmp /tmp/2.2-stable.zip
+or begin
+  set -l err $status
+  echo "Error: Failed to unzip $PROG_NAME"
+  echo "Error: unzip failed" >&2
+  exit $err
+end
+
+
+
+# ## Move
+mv /tmp/CodeIgniter-2.2-stable "$INSTALL_LOC"
+or begin
+  set -l err $status
+  echo "Error: Failed to move $PROG_NAME"
+  echo "Error: Moving CI from /tmp failed" >&2
+  exit $err
+end
+
+
+
+# ## Cleanup
+# No need to check for failures here
+rm -f /tmp/2.2-stable.zip
+
+
+
+# ## End
+echo "
+$PROG_NAME Installation complete! You can then visit your $PROG_NAME
+installation at the following address:
+
+    $USERNAME.koding.io/codeigniter
+
+"
+end
+main
+# vim: set filetype=fish:

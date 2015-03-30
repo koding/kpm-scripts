@@ -1,0 +1,48 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "noVNC"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not test -e /usr/share/kpmnovnc
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+sudo rm -rf /usr/share/kpmnovnc
+or begin
+  set -l err $status
+  echo "Error: Failed to remove $PROG_NAME"
+  echo "Error: rm to remove kpmnovnc" >&2
+  exit $err
+end
+
+
+
+# ## Uninstall
+sudo rm /usr/local/bin/novnc
+or begin
+  set -l err $status
+  echo "Warning: Failed to remove $PROG_NAME"
+  echo "Warning: rm to remove novnc shortcut script" >&2
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:
