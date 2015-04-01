@@ -68,7 +68,7 @@ Downloading Meteor
 "
 mkdir -p /tmp
 curl --progress-bar --fail -o "/tmp/meteor.tar.gz" \
-  "https://d3sqy0vbqsdhku.cloudfront.net/packages-bootstrap/1.0/meteor-bootstrap-os.linux.x86_64.tar.gz"
+  "https://d3sqy0vbqsdhku.cloudfront.net/packages-bootstrap/1.1/meteor-bootstrap-os.linux.x86_64.tar.gz"
 or begin
   set -l err $status
   echo "Error: Download of MeteorJS failed"
