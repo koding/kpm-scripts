@@ -34,21 +34,58 @@ EOF
   echo "Req Error: Not enough storage" >&2
   exit 84
 fi
-# ### Check if Vagrant is installed
-# We'll be automatically installing vagrant in the future, but for now
-# just check.
-which vagrant > /dev/null
-if [ $? -ne 0 ]; then
-  cat << EOF
-$PROG_NAME requires that Vagrant is already installed. Automatic
-installation will be added in the near future, but for now please
-visit the following address and install Vagrant:
 
-    https://www.vagrantup.com
+
+# ## Inform the user about sudo permissions
+cat << EOF
+
+$PROG_NAME is being installed. Please provide your sudo password if
+prompted.
 
 EOF
-  echo "Req Error: Missing vagrant" >&2
-  exit 84
+
+
+# ## Download & Install Vagrant
+# We may want to present a GUI for the sudo request. In theory, this
+# applescript will do just that. For now though, we'll use plain
+# old sudo.
+#osascript -e "do shell script \"foobarbaz\" with administrator privileges"
+which vagrant > /dev/null
+if [ $? -ne 0 ]; then
+  vagrantDmg="vagrant_1.7.2.dmg"
+  echo "Vagrant not found, installing now.."
+
+  curl -L -o "/tmp/$vagrantDmg" "https://dl.bintray.com/mitchellh/vagrant/$vagrantDmg"
+  err=$?; if [ $err -ne 0 ]; then
+    echo "Error: Failed to download Vagrant"
+    echo "Error: Failed to download Vagrant" >&2
+    exit $err
+  fi
+
+  hdiutil mount "/tmp/$vagrantDmg"
+  err=$?; if [ $err -ne 0 ]; then
+    echo "Error: Failed to mount the Vagrant Dmg"
+    echo "Error: Failed to mount the Vagrant Dmg" >&2
+    exit $err
+  fi
+
+  # "/Volumes/Macintosh HD" may also be an acceptable default.
+  sudo installer -pkg "/Volumes/Vagrant/Vagrant.pkg" -target "/"
+  err=$?; if [ $err -ne 0 ]; then
+    echo "Error: Failed to install Vagrant package"
+    echo "Error: Failed to install Vagrant package" >&2
+    exit $err
+  fi
+
+
+  hdiutil unmount "/Volumes/Vagrant/"
+  err=$?; if [ $err -ne 0 ]; then
+    echo "Warning: Failed to unmount the Vagrant Dmg"
+    echo "Warning: Failed to unmount the Vagrant Dmg" >&2
+    exit $err
+  fi
+
+  rm "/tmp/$vagrantDmg"
 fi
 
 
@@ -60,6 +97,7 @@ fi
 if [ -f "$INSTLOC/Vagrantfile" ];
 then
   cat << EOF
+
 A Vagrantfile already exists at the following installation path. If you
 have any modifications to this file, they will be lost.
 
@@ -69,10 +107,11 @@ EOF
   # read from tty, because we're piping
   # pipe stderr to stdout, because kpm uses stderr for debug
   read -p "Overwrite this file? (y/n):" -n 1 -r < /dev/tty 2>&1
+  echo "" # newline
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "KodingVM installation exiting."
     exit 1
   fi
-  echo "" # newline
 fi
 
 
@@ -92,11 +131,17 @@ mkdir -p $INSTLOC \
 cat > "$INSTLOC/.bootstrap.sh" << EOF
 #!/usr/bin/env bash
 # The following file is automatically generated.
-# !! Do not modify !!
 
+# Update apt, and install some common vm tools
 sudo apt-get update -y
 sudo apt-get install -y fish
+
+# Install kpm
 curl -sSL learn.koding.com/kpm.sh | sh
+
+# Install ngrok
+sudo -sSL -o /usr/local/bin/ngrok \
+  https://api.equinox.io/1/Applications/ap_pJSFC5wQYkAyI0FIVwKYs9h1hW/Updates/Asset/ngrok.zip?os=linux&arch=386&channel=stable
 
 EOF
 
@@ -132,6 +177,11 @@ fi
 # ## Test successful klient link
 # TODO: Communicate with klient to ensure a connected and working
 # koding installation.
+cat << EOF
+
+Warning: KodingVM Klient setup is NOT IMPLEMENTED
+
+EOF
 
 
 
