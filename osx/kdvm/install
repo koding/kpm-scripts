@@ -127,23 +127,13 @@ mkdir -p $INSTLOC \
 # Currently no bootstrap data gathered.
 
 
-# ## Write bootstrap
-cat > "$INSTLOC/.bootstrap.sh" << EOF
-#!/usr/bin/env bash
-# The following file is automatically generated.
-
-# Update apt, and install some common vm tools
-sudo apt-get update -y
-sudo apt-get install -y fish
-
-# Install kpm
-curl -sSL learn.koding.com/kpm.sh | sh
-
-# Install ngrok
-sudo -sSL -o /usr/local/bin/ngrok \
-  https://api.equinox.io/1/Applications/ap_pJSFC5wQYkAyI0FIVwKYs9h1hW/Updates/Asset/ngrok.zip?os=linux&arch=386&channel=stable
-
-EOF
+# ##  Download bootstrap
+curl -sSLO "$KPM_SCRIPTDIR/bootstrap.sh"
+err=$?; if [ $err -ne 0 ]; then
+  echo "Error: Failed to download bootstrap"
+  echo "Error: Failed to download bootstrap" >&2
+  exit $err
+fi
 
 
 
@@ -152,7 +142,7 @@ cat > "$INSTLOC/Vagrantfile" << EOF
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
-  config.vm.provision :shell, path: ".bootstrap.sh"
+  config.vm.provision :shell, path: "bootstrap.sh"
 end
 
 EOF
