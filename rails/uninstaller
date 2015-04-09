@@ -30,6 +30,10 @@ or begin
   exit $err
 end
 
+# Temporary workaround to rails not wanting to remove
+# the modifications
+sudo rm /usr/local/bin/rails
+
 
 
 # ## Purge some dependencies

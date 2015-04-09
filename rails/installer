@@ -7,6 +7,7 @@ function main
 set -l PROG_NAME    "Rails"
 set -l REQ_STORAGE  4764
 set -l USERNAME     $USER
+set -l railsVersion "4.2.1"
 
 
 
@@ -99,7 +100,7 @@ end
 
 # ## Install
 echo "Installing rails, this can take a while.."
-sudo gem install rails --no-ri --no-rdoc
+sudo gem install rails -v "$railsVersion" --no-ri --no-rdoc
 or begin
   set -l err $status
   echo "Error: Failure installing rails"
@@ -109,9 +110,18 @@ end
 
 
 
+# ## Add rails alias
+sudo cp "/var/lib/gems/2.0.0/gems/railties-$railsVersion/bin/rails" "/usr/local/bin/_rails"
+or begin
+  set -l err $status
+  echo "Error: Failed setting up rails alias"
+  echo "Error: Failed setting up rails alias" >&2
+  exit $err
+end
+
+
 # ## Add wrapper
-sudo cp "/var/lib/gems/2.0.0/gems/railties-4.2.0/bin/rails" "/usr/local/bin/_rails"
-and sudo curl -L -o "/tmp/railswrapper" "https://raw.githubusercontent.com/koding/kpm-scripts/develop/rails/wrapper"
+sudo curl -L -o "/tmp/railswrapper" "https://raw.githubusercontent.com/koding/kpm-scripts/develop/rails/wrapper"
 and sudo mv "/tmp/railswrapper" "/usr/local/bin/rails"
 and sudo chmod +x "/usr/local/bin/rails"
 or begin
