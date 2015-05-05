@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Config
+PROG_NAME="Jekyll"
+USERNAME=$USER
+
+
+# Check if it's installed
+if ! [ $(which jekyll) > /dev/null ]; then
+  echo "
+A kpm installation of $PROG_NAME cannot be found.
+"
+  echo "Req Error: Installation not found" >&2
+  exit 84
+fi
+
+
+# Remove RVM & Jekyll
+gem uninstall jekyll --force
+rvm implode --force
+
+rm -f ~/.bashrc
+rm -f ~/.mkshrc
+rm -f ~/.zshrc
+rm -f ~/.bash_profile
+rm -f ~/.profile
+rm -f ~/.zlogin
+
+# Remove keys
+rm -rf ~/.gnupg
+
+# Remove gems that were installed along with jekyll
+rm -rf ~/.gem
+
+# Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
