@@ -80,6 +80,11 @@
     "tags": ["node", "nodejs"]
   },
   {
+    "name": "jekyll",
+    "description": "A static site generator",
+    "tags": ["static site generator", "markdown"]
+  },
+  {
     "name": "jenkins",
     "description": "An extensible continuous integration server",
     "tags": ["continuous integration", "ci"]
