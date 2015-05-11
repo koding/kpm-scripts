@@ -106,12 +106,12 @@
   },
   {
     "name": "mean",
-    "description": "A full stack javascript framework",
+    "description": "A full stack mean.io javascript framework",
     "tags": ["javascript", "node", "nodejs", "angularjs", "expressjs"]
   },
   {
     "name": "mean-io-stack",
-    "description": "Installs everything needed for a MeanJS installation",
+    "description": "Installs everything needed for a mean.io installation",
     "tags": ["javascript", "node", "nodejs", "mongodb", "mongo"]
   },
   {
