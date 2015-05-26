@@ -5,7 +5,7 @@ set -l PROG_NAME    "Drupal"
 set -l REQ_STORAGE  100
 set -l USERNAME     $USER
 set -l INSTLOC      ~/Web/drupal
-set -l VER          "7.34"
+set -l VER          "7.37"
 set -l DBNAME       "kpm_drupal_db"
 
 
@@ -156,7 +156,7 @@ end
 
 
 # ## Install dependencies
-sudo apt-get install -y php5-gd
+sudo apt-get install -y php5-gd php5-common php5-mysql
 or begin
   set -l err $status
   echo "Error: Failure installing $PROG_NAME dependencies"
