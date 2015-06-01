@@ -75,7 +75,7 @@ or begin
   echo "Error: Failure updating apt-get" >&2
   exit $err
 end
-sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y mysql-server
+sudo env DEBIAN_FRONTEND=noninteractive apt-get install -q -y mysql-server php5-mysql
 or begin
   set -l err $status
   echo "Error: Failure installing $PROG_NAME"
