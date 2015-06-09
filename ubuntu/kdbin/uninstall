@@ -1,0 +1,33 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "kdbin"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Check if installed
+if not which kdbin > /dev/null
+  echo "
+A $PROG_NAME installation cannot be found.
+"
+  echo "Req Error: Cannot find install" >&2
+  exit 84
+end
+
+
+
+# ## Uninstall
+sudo rm /usr/local/bin/kdbin
+sudo rm /usr/local/bin/kdopen
+
+
+
+# ## Success
+echo "
+$PROG_NAME has been uninstalled successfully.
+"
+end
+main
+# vim: set filetype=fish:

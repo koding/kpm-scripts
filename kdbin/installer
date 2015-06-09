@@ -1,0 +1,81 @@
+#!/usr/bin/env fish
+function main
+# ## Config
+set -l PROG_NAME    "kdbin"
+set -l USERNAME     $USER
+
+
+
+# ## Check Requirements
+# ### Already installed?
+if which kdbin > /dev/null
+  echo "
+$PROG_NAME is already installed.
+"
+  echo "Req Error: Already installed" >&2
+  exit 84
+end
+
+
+
+# ## Navigate to temp, make if needed
+mkdir -p /tmp/kdbin-install
+and pushd /tmp/kdbin-install
+
+
+# ## Get current build
+set -l build (curl -sSL "http://kdbin.s3.amazonaws.com/linux/current")
+or begin
+  set -l err $status
+  echo "Error: Unable to get current $PROG_NAME version"
+  echo "Error: Unable to get current $PROG_NAME version" >&2
+  exit $err
+end
+
+
+
+# ## Download kdbin
+curl -O "http://kdbin.s3.amazonaws.com/linux/$build/bin"
+or begin
+  set -l err $status
+  echo "Error: Unable to download $PROG_NAME build $build"
+  echo "Error: Failed to download $PROG_NAME build $build" >&2
+  exit $err
+end
+
+
+
+# ## Move kdbin
+chmod +x ./bin
+and sudo mv ./bin /usr/local/bin/kdbin
+or begin
+  set -l err $status
+  echo "Error: Unable to download $PROG_NAME build $build"
+  echo "Error: Failed to download $PROG_NAME build $build" >&2
+  exit $err
+end
+
+
+
+# ## Create kdopen script
+echo "
+#!/usr/bin/env bash
+kdbin open \"\$@\"
+" | sudo tee /usr/local/bin/kdopen > /dev/null
+and sudo chmod +x /usr/local/bin/kdopen
+or begin
+  set -l err $status
+  echo "Error: Failed to create kdopen shortcut"
+  echo "Error: Failed to create kdopen shortcut" >&2
+  exit $err
+end
+
+
+
+# ## Success
+echo "
+$PROG_NAME installation complete.
+"
+end
+main
+# vim: set filetype=fish:
