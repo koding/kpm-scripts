@@ -58,8 +58,7 @@ end
 
 
 # ## Create kdopen script
-echo "
-#!/usr/bin/env bash
+echo "#!/usr/bin/env bash
 kdbin open \"\$@\"
 " | sudo tee /usr/local/bin/kdopen > /dev/null
 and sudo chmod +x /usr/local/bin/kdopen
