@@ -20,7 +20,7 @@ following command:
   exit 84
 end
 # ### tightvnc installed?
-if which vncserver > /dev/null
+if not which vncserver > /dev/null
   echo "
 The kpm installation of $PROG_NAME requires that VNC is already installed.
 Please install it with the following command:
@@ -68,6 +68,8 @@ end
 
 # ## Download
 sudo git clone https://github.com/kanaka/noVNC /usr/share/kpmnovnc > /dev/null
+and cd /usr/share/kpmnovnc
+and sudo git checkout v0.5.1
 or begin
   set -l err $status
   echo "Error: Failure downloading $PROG_NAME"

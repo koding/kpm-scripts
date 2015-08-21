@@ -19,8 +19,9 @@ end
 
 
 # ## Uninstall
+# rm -rf doesn't fail, so we have to check it's existence manually.
 sudo rm -rf /usr/share/kpmnovnc
-or begin
+if test -e /usr/share/kpmnovnc
   set -l err $status
   echo "Error: Failed to remove $PROG_NAME"
   echo "Error: rm to remove kpmnovnc" >&2
