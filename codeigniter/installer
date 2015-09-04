@@ -45,7 +45,7 @@ end
 
 
 # ## Download
-curl -L -o /tmp/2.2-stable.zip https://github.com/bcit-ci/CodeIgniter/archive/2.2-stable.zip
+curl -L -o /tmp/3.0-stable.zip https://github.com/bcit-ci/CodeIgniter/archive/3.0-stable.zip
 or begin
   set -l err $status
   echo "Error: Failed to download $PROG_NAME"
@@ -56,7 +56,7 @@ end
 
 
 # ## Unzip
-unzip -d /tmp /tmp/2.2-stable.zip
+unzip -d /tmp /tmp/3.0-stable.zip
 or begin
   set -l err $status
   echo "Error: Failed to unzip $PROG_NAME"
@@ -67,7 +67,7 @@ end
 
 
 # ## Move
-mv /tmp/CodeIgniter-2.2-stable "$INSTALL_LOC"
+mv /tmp/CodeIgniter-3.0-stable "$INSTALL_LOC"
 or begin
   set -l err $status
   echo "Error: Failed to move $PROG_NAME"
@@ -79,7 +79,7 @@ end
 
 # ## Cleanup
 # No need to check for failures here
-rm -f /tmp/2.2-stable.zip
+rm -f /tmp/3.0-stable.zip
 
 
 
