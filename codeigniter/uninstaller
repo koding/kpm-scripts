@@ -40,9 +40,9 @@ for x in (seq 3)
     exit 1
   end
   switch "$confirm"
-    case "yes" "y"
+    case "yes" "y" "Y" "Yes" "YES"
       break
-    case "no" "n"
+    case "no" "n" "N" "No" "NO"
       echo "Confirm choice no" >&2
       exit 1
     case "*"
