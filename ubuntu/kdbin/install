@@ -35,7 +35,8 @@ end
 
 
 # ## Download kdbin
-curl -O "http://kdbin.s3.amazonaws.com/linux/$build/bin"
+# edited, the s3 bucket moved. Temporary fix.
+curl -O "https://koding-dl.s3.amazonaws.com/kdbin"
 or begin
   set -l err $status
   echo "Error: Unable to download $PROG_NAME build $build"
